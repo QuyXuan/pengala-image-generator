@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link rel="stylesheet" href="../static/css/main.css" />
+    <title>Pengala</title>
+  </head>
+  <body class="bg-[#030712]">
+    <header
+      class="flex fixed backdrop-filter backdrop-blur-md top-0 z-40 w-full flex-none transition-colors duration-300 lg:z-50 bg-opacity-0 dark:bg-[#110F1A] h-[80px] max-h-[80px]"
+    >
+      <div class="flex-1 flex items-center justify-between px-4 md:gap-6">
+        <div class="flex">
+          <a href="/"
+            ><div class="flex max-w-[136px] max-h-10">
+              <img src="../static/images/Logo.png" /></div
+          ></a>
+        </div>
+        <div
+          class="flex-1 max-sm:overflow-x-auto justify-between items-center sm:h-full h-14 max-sm:py-1"
+        >
+          <div class="h-full flex justify-center">
+            <div
+              class="h-full flex justify-center items-center cursor-pointer max-sm:rounded-xl max-sm:overflow-hidden"
+            >
+              <div class="h-full sm:w-14 w-12 relative group/menu">
+                <div class="h-full flex justify-center items-center">
+                  <img
+                    src="https://pixor.ai/menu/ToolBox/import_image_icon.svg"
+                    alt=""
+                  />
+                </div>
+                <div
+                  class="bg-[#110F1A] rounded-lg px-3 py-[6px] mt-2 absolute invisible group-hover/menu:visible group-hover:visible max-sm:hidden left-1/2 -translate-x-1/2 w-fit"
+                >
+                  <svg
+                    height="6"
+                    viewBox="0 0 12 6"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="absolute -top-[6px] left-1/2 -translate-x-1/2"
+                  >
+                    <path
+                      d="M6 5.24537e-07L-4.29138e-07 6L12 6L6 5.24537e-07Z"
+                      fill="#110F1A"
+                    ></path>
+                  </svg>
+                  <span
+                    class="whitespace-nowrap text-white text-sm font-normal leading-tight"
+                  >
+                    Import image
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div
+              class="h-full flex justify-center items-center cursor-pointer max-sm:rounded-xl max-sm:overflow-hidden"
+            >
+              <div class="h-full sm:w-14 w-12 relative group/menu">
+                <div class="h-full flex justify-center items-center">
+                  <img
+                    src="https://pixor.ai/menu/ToolBox/edit_image_icon.svg"
+                    alt=""
+                  />
+                </div>
+                <div
+                  class="bg-[#110F1A] rounded-lg px-3 py-[6px] mt-2 absolute invisible group-hover/menu:visible group-hover:visible max-sm:hidden left-1/2 -translate-x-1/2 w-fit"
+                >
+                  <svg
+                    height="6"
+                    viewBox="0 0 12 6"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="absolute -top-[6px] left-1/2 -translate-x-1/2"
+                  >
+                    <path
+                      d="M6 5.24537e-07L-4.29138e-07 6L12 6L6 5.24537e-07Z"
+                      fill="#110F1A"
+                    ></path>
+                  </svg>
+                  <span
+                    class="whitespace-nowrap text-white text-sm font-normal leading-tight"
+                    >Edit image</span
+                  >
+                </div>
+              </div>
+            </div>
+            <div
+              class="h-full flex justify-center items-center cursor-pointer max-sm:rounded-xl max-sm:overflow-hidden"
+            >
+              <div class="h-full sm:w-14 w-12 relative group/menu">
+                <div class="h-full flex justify-center items-center">
+                  <img
+                    src="https://pixor.ai/menu/ToolBox/remove_background_icon.svg"
+                    alt=""
+                  />
+                </div>
+                <div
+                  class="bg-[#110F1A] rounded-lg px-3 py-[6px] mt-2 absolute invisible group-hover/menu:visible group-hover:visible max-sm:hidden left-1/2 -translate-x-1/2 w-fit"
+                >
+                  <svg
+                    height="6"
+                    viewBox="0 0 12 6"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="absolute -top-[6px] left-1/2 -translate-x-1/2"
+                  >
+                    <path
+                      d="M6 5.24537e-07L-4.29138e-07 6L12 6L6 5.24537e-07Z"
+                      fill="#110F1A"
+                    ></path>
+                  </svg>
+                  <span
+                    class="whitespace-nowrap text-white text-sm font-normal leading-tight"
+                    >Remove background</span
+                  >
+                </div>
+              </div>
+            </div>
+            <div
+              class="h-full flex justify-center items-center cursor-pointer max-sm:rounded-xl max-sm:overflow-hidden"
+            >
+              <div class="h-full sm:w-14 w-12 relative group/menu">
+                <div class="h-full">
+                  <div class="h-full w-full" data-headlessui-state="">
+                    <button
+                      class="h-full w-full border-none focus:border-none focus:outline-none flex justify-center items-center"
+                      id="headlessui-popover-button-11066"
+                      type="button"
+                      aria-expanded="false"
+                      data-headlessui-state=""
+                    >
+                      <img
+                        src="https://pixor.ai/menu/ToolBox/background_tool_icon.svg"
+                        alt=""
+                      />
+                    </button>
+                  </div>
+                </div>
+                <div
+                  class="bg-[#110F1A] rounded-lg px-3 py-[6px] mt-2 absolute invisible group-hover/menu:visible group-hover:visible max-sm:hidden left-1/2 -translate-x-1/2 w-fit"
+                >
+                  <svg
+                    height="6"
+                    viewBox="0 0 12 6"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="absolute -top-[6px] left-1/2 -translate-x-1/2"
+                  >
+                    <path
+                      d="M6 5.24537e-07L-4.29138e-07 6L12 6L6 5.24537e-07Z"
+                      fill="#110F1A"
+                    ></path>
+                  </svg>
+                  <span
+                    class="whitespace-nowrap text-white text-sm font-normal leading-tight"
+                    >Add background</span
+                  >
+                </div>
+              </div>
+            </div>
+            <div
+              class="h-full flex justify-center items-center cursor-pointer max-sm:rounded-xl max-sm:overflow-hidden"
+            >
+              <div class="h-full sm:w-14 w-12 relative group/menu">
+                <div class="h-full flex justify-center items-center">
+                  <img
+                    src="https://pixor.ai/menu/ToolBox/erase_image_icon.svg"
+                    alt=""
+                  />
+                </div>
+                <div
+                  class="bg-[#110F1A] rounded-lg px-3 py-[6px] mt-2 absolute invisible group-hover/menu:visible group-hover:visible max-sm:hidden left-1/2 -translate-x-1/2 w-fit"
+                >
+                  <svg
+                    height="6"
+                    viewBox="0 0 12 6"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="absolute -top-[6px] left-1/2 -translate-x-1/2"
+                  >
+                    <path
+                      d="M6 5.24537e-07L-4.29138e-07 6L12 6L6 5.24537e-07Z"
+                      fill="#110F1A"
+                    ></path>
+                  </svg>
+                  <span
+                    class="whitespace-nowrap text-white text-sm font-normal leading-tight"
+                    >Erase image</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="flex">
+          <div class="relative gap-2 md:gap-6 flex items-center">
+            <div class="cursor-pointer min-w-[40px]">
+              <img
+                class="w-10 h-10 inline-block rounded-full"
+                src="https://lh3.googleusercontent.com/a/ACg8ocItsLLAEDm_xndUSNB1ZWx_pKFDPM9mTdJjzkdanOXR_UU=s96-c"
+                alt="Hung Quy "
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+  </body>
+</html>
