@@ -1,0 +1,101 @@
+.hidden-scroll::-webkit-scrollbar {
+  width: 0px
+}
+
+.btn-gradient-transition {
+  background: linear-gradient(90deg, #a855f7, #0ea5e9 51%, #a855f7) 0 / 200%;
+  background: linear-gradient(90deg, #a855f7, #0ea5e9 51%, #a855f7) var(--x, 0) / 200%;
+  transition: .5s;
+}
+
+.btn-gradient-transition:disabled {
+  background: #4f4f4f;
+}
+
+.overlay {
+  position: fixed;
+  display: none;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+}
+
+.overlay.load {
+  display: block;
+}
+
+.overlay .loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 5px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 5px solid #3498db;
+  width: 50px;
+  height: 50px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+.image-placeholder-animation {
+  animation: animateBg 3s linear infinite;
+  background-image: linear-gradient(90deg, #374151, #6b7280, #374151, #6b7280);
+  background-size: 300% 100%;
+}
+
+@keyframes animateBg {
+  0% {
+    background-position: 0 0
+  }
+
+  to {
+    background-position: 100% 0
+  }
+}
+
+.btn-download::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: conic-gradient(#a855f7,
+      #0ea5e9,
+      #30dd87,
+      #facc15,
+      #f97316,
+      #ef4444,
+      #a855f7);
+  border-radius: 50%;
+  animation: rotateBackground 5s linear infinite;
+}
+
+@keyframes rotateBackground {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+i.fa-download {
+  z-index: 1;
+}
