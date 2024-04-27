@@ -1,9 +1,17 @@
+import { fetchImageURL, fetchImageFromExplore } from "./firebase.js";
+
 $(document).ready(function () {
   FunctionModule.Init();
   FunctionModule.InitEvents();
 });
 
 const FunctionModule = (function () {
+  let take = 10;
+  let loading = false;
+  let lastKey = null;
+  let columnCount = 5;
+  let currentColumn = 1;
+
   const toast = Swal.mixin({
     toast: true,
     position: "top-end",
@@ -18,7 +26,11 @@ const FunctionModule = (function () {
 
   const Init = function () {
     try {
-      $("#text-prompt").focus();
+      if (window.location.pathname === "/") {
+        fetchImagesInfiniteScroll();
+      } else if (window.location.pathname === "/create") {
+        $("#text-prompt").focus();
+      }
     } catch (e) {
       console.log("Init: " + e.message);
     }
@@ -26,6 +38,16 @@ const FunctionModule = (function () {
 
   const InitEvents = function () {
     try {
+      $(".explore").scroll(function () {
+        if (
+          $(this).scrollTop() + $(this).height() >=
+            $(this)[0].scrollHeight - 100 &&
+          !loading
+        ) {
+          fetchImagesInfiniteScroll();
+        }
+      });
+
       $("#checkbox-switch-mode").on("click", function () {
         toggleSwitchMode(this);
       });
@@ -82,6 +104,35 @@ const FunctionModule = (function () {
 
       $("#btn-logout").on("click", function () {
         logout();
+      });
+
+      $("#image-dialog-container").on("click", function (event) {
+        if (event.target.id === "image-dialog-container") {
+          $("#image-dialog-container").addClass("hidden");
+          $("#image-dialog-container").removeClass("flex");
+        }
+      });
+
+      $("#close-image-dialog").on("click", function () {
+        $("#raw-image-dialog-right").hide();
+        $("#image-dialog-container").addClass("hidden");
+        $("#image-dialog-container").removeClass("flex");
+      });
+
+      $("#raw-image-dialog-right")
+        .on("mousedown", function () {
+          $("#raw-image-dialog-left").show();
+          $("#transferred-image-dialog").hide();
+        })
+        .on("mouseup", function () {
+          $("#raw-image-dialog-left").hide();
+          $("#transferred-image-dialog").show();
+        });
+
+      $("#btn-download-dialog").on("click", function () {
+        downloadImage(
+          $("#transferred-image-dialog").children("img").attr("src")
+        );
       });
     } catch (e) {
       console.log("InitEvents: " + e.message);
@@ -306,18 +357,82 @@ const FunctionModule = (function () {
       })
       .then((result) => {
         if (result.isConfirmed) {
-          downloadImage(imageUrl);
+          downloadImage(imageUrl.split("?")[0]);
         }
       });
   };
 
+  const showImageDialog = function (
+    imageTransferredURL,
+    prompt,
+    username,
+    userAvatar,
+    imageRawURL
+  ) {
+    getMetaImage(imageTransferredURL, function (width, height) {
+      const aspectRatio = width / height;
+      const imageDialogContainer = $("#image-dialog-container");
+      const userAvatarDialog = $("#user-avatar-dialog");
+      const usernameDialog = $("#user-name-dialog");
+      const textPromptDialog = $("#text-prompt-dialog");
+      const rawImageDialogRight = $("#raw-image-dialog-right");
+      const rawImageDialogLeft = $("#raw-image-dialog-left");
+      const textPromptContainer = $("#text-prompt-container");
+      const transferredImage = $("#transferred-image-dialog").children("img");
+      transferredImage.css({
+        "aspect-ratio": aspectRatio,
+      });
+      transferredImage.attr("src", imageTransferredURL);
+      textPromptDialog.text(prompt);
+      usernameDialog.text(username);
+      userAvatarDialog.attr("src", userAvatar);
+      if (imageRawURL) {
+        const imgRight = rawImageDialogRight
+          .children("div")
+          .children("div")
+          .children("img");
+        imgRight.attr("src", imageRawURL);
+        imgRight.css({
+          "aspect-ratio": aspectRatio,
+        });
+        const imgLeft = rawImageDialogLeft.children("img");
+        imgLeft.attr("src", imageRawURL);
+        imgLeft.css({
+          "aspect-ratio": aspectRatio,
+        });
+        rawImageDialogRight.show();
+      }
+      prompt ? textPromptContainer.show() : textPromptContainer.hide();
+      imageDialogContainer.addClass("flex");
+      imageDialogContainer.removeClass("hidden");
+    });
+  };
+
   const downloadImage = function (imageUrl) {
-    // const downloadLink = $("<a>")
-    //   .attr("href", imageUrl)
-    //   .attr("download", "")
-    //   .appendTo("body");
-    // downloadLink[0].click();
-    // downloadLink.remove();
+    fetchImageURL(imageUrl).then((url) => {
+      const fileName = imageUrl.split("/").pop();
+      fetch(url).then((response) => {
+        if (response.ok) {
+          response.blob().then((blob) => {
+            const blobData = window.URL.createObjectURL(blob);
+            const downloadLink = $("<a>")
+              .attr("href", blobData)
+              .attr("download", fileName)
+              .appendTo("body");
+            downloadLink[0].click();
+            downloadLink.remove();
+          });
+        }
+      });
+    });
+  };
+
+  const getMetaImage = function (url, callback) {
+    var img = new Image();
+    img.src = url;
+    img.onload = function () {
+      callback(this.width, this.height);
+    };
   };
 
   const toggleUserAvatar = function () {
@@ -350,6 +465,104 @@ const FunctionModule = (function () {
         console.log(error);
       },
     });
+  };
+
+  const fetchImagesInfiniteScroll = function () {
+    loading = true;
+    fetchImageFromExplore(take, lastKey)
+      .then((snapshotValue) => {
+        const images = Object.values(snapshotValue);
+        if (images.length === 0) {
+          showWarning("No more images to show");
+          return;
+        }
+        lastKey = Object.keys(snapshotValue).pop();
+        images.forEach((image) => {
+          getMetaImage(image.image_transferred_url, function (width, height) {
+            const imageRawDiv = image.image_raw_url
+              ? `<div style="width: 25%;">
+                    <img
+                      loading="lazy"
+                      decoding="async"
+                      src="${image.image_raw_url}"
+                      class="w-full rounded-sm border border-solid border-slate-500/40"
+                    />
+                  </div>`
+              : "";
+            const newDiv = $("<div></div>");
+            newDiv.addClass(
+              "image-explore-container cursor-pointer relative transition-opacity duration-300 delay-500"
+            );
+            newDiv.html(
+              `<div class="overflow-hidden rounded-lg">
+                    <img
+                      src="${image.image_transferred_url}"
+                      class="image-explore cursor-zoom-in transition-hover duration-500 delay-500 w-full h-full flex"
+                      decoding="async"
+                      style="aspect-ratio: ${width} / ${height};"
+                    />
+                    <div
+                      class="image-user-info w-full z-10 absolute right-0 top-0 px-3 py-2 flex items-center gap-2 justify-between invisible"
+                    >
+                      <div class="flex gap-2 w-full">
+                        <div class="h-5 w-5">
+                          <img src="${
+                            image.user_avatar
+                          }" class="w-5 h-5 cursor-default rounded-full" alt="avatar" />
+                        </div>
+                        <div class="w-28 lg:w-20 xl:w-28 py-0.5">
+                          <div
+                            class="whitespace-nowrap overflow-hidden font-semibold leading-4 text-xs"
+                            style="text-overflow: ellipsis;"
+                          >
+                            ${image.user_name}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="image-prompt-container z-10 absolute inset-x-0 bottom-0 w-full invisible opacity-0 transition-opacity duration-300 delay-100"
+                    >
+                      <div
+                        class="flex ${
+                          image.image_raw_url ? "" : "h-14"
+                        } background-gradient border-violet rounded-sm px-3 py-2"
+                      >
+                        <div
+                          class="flex flex-col justify-end pr-1 font-bold" style="width: 75%;"
+                        >
+                          <p
+                            class="whitespace-nowrap overflow-hidden text-xs text-white"
+                            style="text-overflow: ellipsis;"
+                          >
+                            ${image.prompt ? image.prompt : ""}
+                          </p>
+                        </div>
+                        ${imageRawDiv}
+                      </div>
+                    </div>
+                  </div>`
+            );
+            newDiv.on("click", function () {
+              showImageDialog(
+                image.image_transferred_url,
+                image.prompt,
+                image.user_name,
+                image.user_avatar,
+                image.image_raw_url
+              );
+            });
+            $(`#images-column-${currentColumn}`).append(newDiv);
+            currentColumn = (currentColumn % columnCount) + 1;
+          });
+        });
+        loading = false;
+      })
+      .catch((error) => {
+        showError("Error fetching images");
+        console.log(error);
+        loading = false;
+      });
   };
 
   return {

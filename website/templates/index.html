@@ -15,626 +15,511 @@
   <body
     class="antialiased duration-300 transition-colors text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-950"
   >
-    <div id="loading-overlay" class="overlay">
-      <div class="loader"></div>
-    </div>
-
-    <div class="pt-20">
-      <!-- header -->
-      <header
-        id="header"
-        class="flex fixed backdrop-filter backdrop-blur-md top-0 z-40 w-full flex-none transition-colors duration-300 lg:z-50 bg-opacity-0 dark:bg-[#110F1A] h-[80px] max-h-[80px]"
+    <header
+      class="flex fixed backdrop-filter backdrop-blur-md top-0 z-40 w-full flex-none transition-colors duration-300 lg:z-50 bg-opacity-0 dark:bg-[#110F1A] h-[80px] max-h-[80px]"
+    >
+      <div
+        class="flex-1 flex items-center justify-between mx-auto px-4 gap-2 md:gap-6 w-full"
       >
-        <div class="flex-1 flex items-center justify-between px-4 md:gap-6">
-          <div class="flex">
-            <a href="/"
-              ><div class="flex max-w-[136px] max-h-10">
-                <img src="../static/images/logo.png" /></div
-            ></a>
+        <div class="flex">
+          <a
+            aria-current="page"
+            href="/"
+            class="router-link-active router-link-exact-active"
+            ><div class="flex max-w-[136px] max-h-10">
+              <img src="../static/images/logo.png" /></div
+          ></a>
+        </div>
+
+        <div class="w-full flex justify-end items-center">
+          <div class="relative">
+            <button
+              class="flex items-center transition-all duration-300 text-base max-h-20 dark:text-gray-300 outline-none w-28 h-8 rounded-lg bg-gradient-to-r from-purple-500 to-sky-500 text-white justify-between"
+              type="button"
+              aria-expanded="false"
+            >
+              <div
+                class="flex items-center transition-all duration-300 text-base max-h-20 dark:text-gray-300 outline-none grow w-16 h-8 text-white justify-between"
+              >
+                <a
+                  href="/create"
+                  class="h-full w-full flex items-center justify-center"
+                  >Create</a
+                >
+              </div>
+            </button>
           </div>
           <div
-            class="flex-1 max-sm:overflow-x-auto justify-between items-center sm:h-full h-14 max-sm:py-1"
-          >
-            <div class="h-full flex justify-center">
-              <div
-                class="h-full flex justify-center items-center cursor-pointer max-sm:rounded-xl max-sm:overflow-hidden"
-              >
-                <div class="h-full sm:w-14 w-12 relative group/menu">
-                  <div class="h-full flex justify-center items-center">
-                    <img
-                      src="https://pixor.ai/menu/ToolBox/import_image_icon.svg"
-                      alt
-                    />
-                  </div>
-                  <div
-                    class="bg-[#110F1A] rounded-lg px-3 py-[6px] mt-2 absolute invisible group-hover/menu:visible group-hover:visible max-sm:hidden left-1/2 -translate-x-1/2 w-fit"
-                  >
-                    <svg
-                      height="6"
-                      viewBox="0 0 12 6"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="absolute -top-[6px] left-1/2 -translate-x-1/2"
-                    >
-                      <path
-                        d="M6 5.24537e-07L-4.29138e-07 6L12 6L6 5.24537e-07Z"
-                        fill="#110F1A"
-                      ></path>
-                    </svg>
-                    <span
-                      class="whitespace-nowrap text-white text-sm font-normal leading-tight"
-                    >
-                      Import image
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="h-full flex justify-center items-center cursor-pointer max-sm:rounded-xl max-sm:overflow-hidden"
-              >
-                <div class="h-full sm:w-14 w-12 relative group/menu">
-                  <div class="h-full flex justify-center items-center">
-                    <img
-                      src="https://pixor.ai/menu/ToolBox/edit_image_icon.svg"
-                      alt
-                    />
-                  </div>
-                  <div
-                    class="bg-[#110F1A] rounded-lg px-3 py-[6px] mt-2 absolute invisible group-hover/menu:visible group-hover:visible max-sm:hidden left-1/2 -translate-x-1/2 w-fit"
-                  >
-                    <svg
-                      height="6"
-                      viewBox="0 0 12 6"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="absolute -top-[6px] left-1/2 -translate-x-1/2"
-                    >
-                      <path
-                        d="M6 5.24537e-07L-4.29138e-07 6L12 6L6 5.24537e-07Z"
-                        fill="#110F1A"
-                      ></path>
-                    </svg>
-                    <span
-                      class="whitespace-nowrap text-white text-sm font-normal leading-tight"
-                      >Edit image</span
-                    >
-                  </div>
-                </div>
-              </div>
-              <div
-                class="h-full flex justify-center items-center cursor-pointer max-sm:rounded-xl max-sm:overflow-hidden"
-              >
-                <div class="h-full sm:w-14 w-12 relative group/menu">
-                  <div class="h-full flex justify-center items-center">
-                    <img
-                      src="https://pixor.ai/menu/ToolBox/remove_background_icon.svg"
-                      alt
-                    />
-                  </div>
-                  <div
-                    class="bg-[#110F1A] rounded-lg px-3 py-[6px] mt-2 absolute invisible group-hover/menu:visible group-hover:visible max-sm:hidden left-1/2 -translate-x-1/2 w-fit"
-                  >
-                    <svg
-                      height="6"
-                      viewBox="0 0 12 6"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="absolute -top-[6px] left-1/2 -translate-x-1/2"
-                    >
-                      <path
-                        d="M6 5.24537e-07L-4.29138e-07 6L12 6L6 5.24537e-07Z"
-                        fill="#110F1A"
-                      ></path>
-                    </svg>
-                    <span
-                      class="whitespace-nowrap text-white text-sm font-normal leading-tight"
-                      >Remove background</span
-                    >
-                  </div>
-                </div>
-              </div>
-              <div
-                class="h-full flex justify-center items-center cursor-pointer max-sm:rounded-xl max-sm:overflow-hidden"
-              >
-                <div class="h-full sm:w-14 w-12 relative group/menu">
-                  <div class="h-full">
-                    <div class="h-full w-full">
-                      <button
-                        class="h-full w-full border-none focus:border-none focus:outline-none flex justify-center items-center"
-                        id="headlessui-popover-button-11066"
-                        type="button"
-                        aria-expanded="false"
-                      >
-                        <img
-                          src="https://pixor.ai/menu/ToolBox/background_tool_icon.svg"
-                          alt
-                        />
-                      </button>
-                    </div>
-                  </div>
-                  <div
-                    class="bg-[#110F1A] rounded-lg px-3 py-[6px] mt-2 absolute invisible group-hover/menu:visible group-hover:visible max-sm:hidden left-1/2 -translate-x-1/2 w-fit"
-                  >
-                    <svg
-                      height="6"
-                      viewBox="0 0 12 6"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="absolute -top-[6px] left-1/2 -translate-x-1/2"
-                    >
-                      <path
-                        d="M6 5.24537e-07L-4.29138e-07 6L12 6L6 5.24537e-07Z"
-                        fill="#110F1A"
-                      ></path>
-                    </svg>
-                    <span
-                      class="whitespace-nowrap text-white text-sm font-normal leading-tight"
-                      >Add background</span
-                    >
-                  </div>
-                </div>
-              </div>
-              <div
-                class="h-full flex justify-center items-center cursor-pointer max-sm:rounded-xl max-sm:overflow-hidden"
-              >
-                <div class="h-full sm:w-14 w-12 relative group/menu">
-                  <div class="h-full flex justify-center items-center">
-                    <img
-                      src="https://pixor.ai/menu/ToolBox/erase_image_icon.svg"
-                      alt
-                    />
-                  </div>
-                  <div
-                    class="bg-[#110F1A] rounded-lg px-3 py-[6px] mt-2 absolute invisible group-hover/menu:visible group-hover:visible max-sm:hidden left-1/2 -translate-x-1/2 w-fit"
-                  >
-                    <svg
-                      height="6"
-                      viewBox="0 0 12 6"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="absolute -top-[6px] left-1/2 -translate-x-1/2"
-                    >
-                      <path
-                        d="M6 5.24537e-07L-4.29138e-07 6L12 6L6 5.24537e-07Z"
-                        fill="#110F1A"
-                      ></path>
-                    </svg>
-                    <span
-                      class="whitespace-nowrap text-white text-sm font-normal leading-tight"
-                      >Erase image</span
-                    >
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="flex">
-            {% if user_auth.is_auth %}
-            <div class="relative gap-2 md:gap-6 flex items-center">
-              <div id="user-avatar" class="cursor-pointer min-w-[40px]">
-                <img
-                  class="w-10 h-10 inline-block rounded-full"
-                  src="{{user_auth.user_avatar}}"
-                  alt="{{user_auth.user_name}}"
-                />
-              </div>
-              <div
-                id="user-info-container"
-                class="bg-white absolute top-[3.25rem] right-1 hidden min-w-60 p-2 flex-col items-start gap-1 rounded-lg shadow-md bg-opacity-95 text-black"
-              >
-                <div
-                  class="flex w-full px-3 py-2 items-center gap-2 rounded-lg cursor-pointer relative after:content-[''] after:absolute after:border-b after:w-[100%] after:border-[#E3E3E3] after:-bottom-1 after:right-0"
-                >
-                  <div class="cursor-pointer w-6 h-6">
-                    <img
-                      class="inline-block rounded-full w-6 h-6"
-                      src="{{user_auth.user_avatar}}"
-                      alt="{{user_auth.user_name}}"
-                    />
-                  </div>
-                  <p>{{user_auth.user_name}}</p>
-                </div>
-                <div class="w-full">
-                  <div class="cursor-pointer w-full">
-                    <a
-                      href="/profile"
-                      class="flex px-3 py-2 items-center gap-2 rounded-lg w-full"
-                      ><img
-                        src="https://pixor.ai/_nuxt/user.2d8814a4.svg"
-                        alt="Profile"
-                      />
-                      <p>View Profile</p></a
-                    >
-                  </div>
-                </div>
-                <button
-                  id="btn-logout"
-                  class="flex px-3 w-full py-2 items-center gap-2 rounded-lg cursor-pointer relative after:content-[''] after:absolute after:border-b after:w-[100%] after:border-[#E3E3E3] after:-top-1 after:right-0"
-                >
-                  <img
-                    src="https://pixor.ai/_nuxt/logout.27b8dd5a.svg"
-                    alt="logout"
-                  /><span>Logout</span>
-                </button>
-              </div>
-            </div>
-            {% else %}
-            <button
-              id="login-btn"
-              class="flex space-x-2 h-8 max-h-8 w-20 min-w-[80px] items-center justify-end rounded-full py-2 px-4 bg-blue-600 hover:text-opacity-75 dark:hover:text-white font-[Nunito] text-sm font-semibold text-white"
-            >
-              Sign in
-            </button>
-            {% endif %}
-          </div>
+            style="
+              position: fixed;
+              top: 1;
+              left: 1;
+              width: 1;
+              height: 0;
+              padding: 0;
+              margin: -1;
+              overflow: hidden;
+              clip: rect(0, 0, 0, 0);
+              white-space: nowrap;
+              border-width: 0;
+              display: none;
+            "
+          ></div>
         </div>
-      </header>
 
-      <!-- main -->
-      <div class="min-w-full flex h-[calc(100vh-80px)] overflow-hidden">
-        <div class="max-h-[calc(100vh-150px)] max-lg:w-full">
-          <div class="w-full h-full">
-            <div
-              class="relative bg-gray-950 w-full lg:w-[320px] h-full px-4 pt-4 flex flex-col gap-y-5 overflow-y-auto max-lg:overflow-x-hidden hidden-scroll"
-            >
-              <div class="flex justify-between items-center">
-                <div class="h-5 w-full">
-                  <label
-                    class="relative inline-flex items-center cursor-pointer"
-                    ><input
-                      id="checkbox-switch-mode"
-                      type="checkbox"
-                      class="sr-only peer"
-                    />
-                    <div
-                      class="w-[38px] h-5 bg-[#8A8A8A] outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-white after:rounded-full after:h-[18px] after:w-[18px] after:transition-all peer-checked:bg-[#5CB305]"
-                    ></div>
-                    <span class="ml-3 text-sm font-medium"
-                      >Advanced mode</span
-                    ></label
-                  >
-                </div>
-                <div
-                  class="flex justify-center items-center py-2 px-3 cursor-pointer"
-                >
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 20 20"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M10 18.9583C5.66669 18.9583 2.15002 15.4333 2.15002 11.1083C2.15002 6.78333 5.66669 3.25 10 3.25C10.8917 3.25 11.7584 3.375 12.5917 3.63333C12.925 3.73333 13.1084 4.08333 13.0084 4.41667C12.9084 4.75 12.5584 4.93333 12.225 4.83333C11.5167 4.61667 10.7667 4.5 10 4.5C6.35836 4.5 3.40002 7.45833 3.40002 11.1C3.40002 14.7417 6.35836 17.7 10 17.7C13.6417 17.7 16.6 14.7417 16.6 11.1C16.6 9.78333 16.2167 8.51667 15.4917 7.43333C15.3 7.15 15.375 6.75833 15.6667 6.56667C15.95 6.375 16.3417 6.45 16.5334 6.74167C17.4 8.03333 17.8584 9.54167 17.8584 11.1083C17.85 15.4333 14.3334 18.9583 10 18.9583Z"
-                      fill="white"
-                    ></path>
-                    <path
-                      d="M13.4417 5.0583C13.2667 5.0583 13.0917 4.9833 12.9667 4.84164L10.5583 2.07497C10.3333 1.81664 10.3583 1.41664 10.6167 1.19164C10.875 0.966637 11.275 0.991637 11.5 1.24997L13.9083 4.01664C14.1333 4.27497 14.1083 4.67497 13.85 4.89997C13.7417 5.0083 13.5917 5.0583 13.4417 5.0583Z"
-                      fill="white"
-                    ></path>
-                    <path
-                      d="M10.6333 7.10834C10.4417 7.10834 10.25 7.01667 10.125 6.85C9.92501 6.575 9.98335 6.18334 10.2583 5.975L13.0667 3.925C13.3417 3.71667 13.7333 3.78334 13.9417 4.05834C14.15 4.33334 14.0833 4.725 13.8083 4.93334L11 6.99167C10.8917 7.075 10.7667 7.10834 10.6333 7.10834Z"
-                      fill="#8A8A8A"
-                    ></path>
-                  </svg>
-                  <div class="ml-2 text-sm">Reset</div>
-                </div>
-              </div>
-              <div class="w-full">
-                <div class="mb-2 gap-2 flex items-center">
-                  <div class="text-base font-bold">Text Prompt</div>
-                  <div class="relative">
-                    <button
-                      class="group flex items-center text-base font-medium outline-none rounded-full cursor-pointer"
-                      id="headlessui-popover-button-1276"
-                      type="button"
-                      aria-expanded="false"
-                    >
-                      <img
-                        class="w-4 h-4"
-                        src="https://pixor.ai/_nuxt/guide.c0ddc4a2.svg"
-                      />
-                    </button>
-                  </div>
-
+        <div class="flex">
+          <button
+            class="flex space-x-2 h-8 max-h-8 w-20 min-w-[80px] items-center justify-end rounded-full py-2 px-4 bg-blue-600 hover:text-opacity-75 dark:hover:text-white font-[Nunito] text-sm font-semibold text-white"
+          >
+            Sign in
+          </button>
+        </div>
+      </div>
+    </header>
+    <div class="pt-20">
+      <div class="w-full h-full px-4">
+        <div class="infinite-scroll-wrapper explore hidden-scroll">
+          <div class="images-wrapper">
+            <div id="images-column-1" class="images-column">
+              <!-- <div
+                class="relative group transition-opacity duration-300 delay-500"
+              >
+                <div class="overflow-hidden rounded-lg">
                   <div
-                    style="
-                      position: fixed;
-                      top: 1;
-                      left: 1;
-                      width: 1;
-                      height: 0;
-                      padding: 0;
-                      margin: -1;
-                      overflow: hidden;
-                      clip: rect(0, 0, 0, 0);
-                      white-space: nowrap;
-                      border-width: 0;
-                      display: none;
-                    "
+                    class="h-full opacity-50 image-placeholder-animation"
+                    style="aspect-ratio: 512 / 512"
                   ></div>
                 </div>
-                <div class="relative w-full h-[112px]">
-                  <div class="h-full w-full">
-                    <textarea
-                      id="text-prompt"
-                      class="h-full w-full py-2 px-3 border-[1px] border-[#4F4F4F] hover:border-[#A855F7] focus:border-[#A855F7] text-sm rounded-lg outline-none box-border bg-[#110F1A] resize-none overflow-y-auto"
-                      placeholder="Describe what you want the AI draw"
-                    ></textarea>
-                  </div>
-                  <span
-                    class="invisible text-xs leading-4 text-red-500 italic absolute -bottom-5"
-                  ></span>
-                </div>
               </div>
-              <div class="flex flex-row justify-between">
-                <div>
-                  <div class="text-base font-bold pb-2">Prompt Suggestion</div>
-                  <div class="description-text pb-1">
-                    Use AI to improve short prompt and get new prompt idea
-                  </div>
-                </div>
-                <div class="pr-1">
-                  <button
-                    class="h-7 w-7 rounded-full flex justify-center items-center gap-1 bg-slate-600"
-                    disabled
-                  >
-                    <svg
-                      class="pointer-events-none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        fill="currentColor"
-                        d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10s10-4.477 10-10S17.523 2 12 2m5 11h-4v4h-2v-4H7v-2h4V7h2v4h4z"
-                      ></path>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-
-              <div id="image-container" class="relative hidden">
-                <div class="w-full flex flex-col gap-y-[10px]">
-                  <div class="flex flex-row justify-between">
-                    <div class="text-base font-bold">Image</div>
-                  </div>
-                  <div class="relative">
-                    <label for="inputImage">
-                      <div
-                        class="border-dashed border border-[#4F4F4F] relative rounded-lg h-28 flex items-center justify-center cursor-pointer hover:border-[#A855F7] focus:border-[#A855F7]"
-                      >
-                        <div
-                          id="trash-and-image"
-                          class="p-1 absolute w-full h-full left-0 top-0 bg-black text-center border border-dashed border-[#4F4F4F] rounded-lg z-10 hidden"
-                        >
-                          <img
-                            id="image-change"
-                            class="w-fit inline-block object-contain h-full"
-                            alt=""
-                          />
-                        </div>
-                        <span class="w-full"
-                          ><div class="w-full h-28">
-                            <div class="flex h-full justify-center flex-col">
-                              <span
-                                class="table w-full px-0 text-center h-full"
-                                role="button"
-                                ><input
-                                  id="inputImage"
-                                  type="file"
-                                  class="hidden"
-                                  accept=".jpg,.jpeg,.png" />
-                                <div class="table-cell align-middle">
-                                  <span
-                                    ><div
-                                      class="cursor-pointer flex items-center justify-center"
-                                    >
-                                      <div
-                                        class="inline-block text-center leading-none"
-                                      >
-                                        <div>
-                                          <svg
-                                            width="24"
-                                            height="24"
-                                            viewBox="0 0 24 24"
-                                            fill="none"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                          >
-                                            <path
-                                              d="M12 22.75C6.07 22.75 1.25 17.93 1.25 12C1.25 6.07 6.07 1.25 12 1.25C17.93 1.25 22.75 6.07 22.75 12C22.75 17.93 17.93 22.75 12 22.75ZM12 2.75C6.9 2.75 2.75 6.9 2.75 12C2.75 17.1 6.9 21.25 12 21.25C17.1 21.25 21.25 17.1 21.25 12C21.25 6.9 17.1 2.75 12 2.75Z"
-                                              fill="#E3E3E3"
-                                            ></path>
-                                            <path
-                                              d="M16 12.75H8C7.59 12.75 7.25 12.41 7.25 12C7.25 11.59 7.59 11.25 8 11.25H16C16.41 11.25 16.75 11.59 16.75 12C16.75 12.41 16.41 12.75 16 12.75Z"
-                                              fill="#E3E3E3"
-                                            ></path>
-                                            <path
-                                              d="M12 16.75C11.59 16.75 11.25 16.41 11.25 16V8C11.25 7.59 11.59 7.25 12 7.25C12.41 7.25 12.75 7.59 12.75 8V16C12.75 16.41 12.41 16.75 12 16.75Z"
-                                              fill="#E3E3E3"
-                                            ></path>
-                                          </svg>
-                                        </div>
-                                      </div></div
-                                  ></span></div
-                              ></span>
-                            </div></div
-                        ></span>
-                      </div>
-                    </label>
-                    <span
-                      class="invisible text-xs leading-4 text-red-500 italic absolute -bottom-5"
-                    ></span>
-                  </div>
-                </div>
-              </div>
-
-              <div id="image-dimensions-container" class="w-full z-0">
-                <div class="flex flex-col gap-y-2">
-                  <div class="text-base font-bold">Image Dimensions</div>
-                  <div
-                    class="grid lg:grid-cols-3 gap-2 sm:grid-cols-6 grid-cols-3"
-                  >
-                    {% for option in options_dimensions %}
-                    <div
-                      class="option border-[1px] border-[#4F4F4F] p-2 rounded-lg flex items-center justify-center text-xs hover:bg-[#19141D] hover:border-[#A855F7] cursor-pointer z-50 {{'bg-[#3B3947]' if option == '512x512' else ''}}"
-                    >
-                      <div>{{option}}</div>
-                    </div>
-                    {% endfor %}
-                  </div>
-                </div>
-              </div>
-
               <div
-                class="button-container w-[calc(100%-32px)] lg:w-[288px] fixed bottom-0 h-[60px] bg-gray-950 pb-4"
+                class="relative group transition-opacity duration-300 delay-500"
               >
-                <div class="h-ful w-full flex flex-col justify-end">
-                  <button
-                    class="btn-gradient-transition flex justify-center items-center h-ful w-full text-sm font-semibold text-center px-3 py-2 rounded-lg text-white"
-                    disabled
-                  >
-                    Generate
-                  </button>
+                <div class="overflow-hidden rounded-lg">
+                  <div
+                    class="h-full opacity-50 image-placeholder-animation"
+                    style="aspect-ratio: 560 / 768"
+                  ></div>
                 </div>
               </div>
+              <div
+                class="relative group transition-opacity duration-300 delay-500"
+              >
+                <div class="overflow-hidden rounded-lg">
+                  <div
+                    class="h-full opacity-50 image-placeholder-animation"
+                    style="aspect-ratio: 512 / 512"
+                  ></div>
+                </div>
+              </div>
+              <div
+                class="relative group transition-opacity duration-300 delay-500"
+              >
+                <div class="overflow-hidden rounded-lg">
+                  <div
+                    class="h-full opacity-50 image-placeholder-animation"
+                    style="aspect-ratio: 512 / 512"
+                  ></div>
+                </div>
+              </div>
+              <div
+                class="relative group transition-opacity duration-300 delay-500"
+              >
+                <div class="overflow-hidden rounded-lg">
+                  <div
+                    class="h-full opacity-50 image-placeholder-animation"
+                    style="aspect-ratio: 1024 / 1536"
+                  ></div>
+                </div>
+              </div> -->
+            </div>
+            <div id="images-column-2" class="images-column">
+              <!-- <div
+                class="relative group transition-opacity duration-300 delay-500"
+              >
+                <div class="overflow-hidden rounded-lg">
+                  <div
+                    class="h-full opacity-50 image-placeholder-animation"
+                    style="aspect-ratio: 512 / 512"
+                  ></div>
+                </div>
+              </div>
+              <div
+                class="relative group transition-opacity duration-300 delay-500"
+              >
+                <div class="overflow-hidden rounded-lg">
+                  <div
+                    class="h-full opacity-50 image-placeholder-animation"
+                    style="aspect-ratio: 560 / 768"
+                  ></div>
+                </div>
+              </div>
+              <div
+                class="relative group transition-opacity duration-300 delay-500"
+              >
+                <div class="overflow-hidden rounded-lg">
+                  <div
+                    class="h-full opacity-50 image-placeholder-animation"
+                    style="aspect-ratio: 512 / 512"
+                  ></div>
+                </div>
+              </div>
+              <div
+                class="relative group transition-opacity duration-300 delay-500"
+              >
+                <div class="overflow-hidden rounded-lg">
+                  <div
+                    class="h-full opacity-50 image-placeholder-animation"
+                    style="aspect-ratio: 512 / 512"
+                  ></div>
+                </div>
+              </div>
+              <div
+                class="relative group transition-opacity duration-300 delay-500"
+              >
+                <div class="overflow-hidden rounded-lg">
+                  <div
+                    class="h-full opacity-50 image-placeholder-animation"
+                    style="aspect-ratio: 1024 / 1536"
+                  ></div>
+                </div>
+              </div> -->
+            </div>
+            <div id="images-column-3" class="images-column">
+              <!-- <div
+                class="relative group transition-opacity duration-300 delay-500"
+              >
+                <div class="overflow-hidden rounded-lg">
+                  <div
+                    class="h-full opacity-50 image-placeholder-animation"
+                    style="aspect-ratio: 512 / 512"
+                  ></div>
+                </div>
+              </div>
+              <div
+                class="relative group transition-opacity duration-300 delay-500"
+              >
+                <div class="overflow-hidden rounded-lg">
+                  <div
+                    class="h-full opacity-50 image-placeholder-animation"
+                    style="aspect-ratio: 560 / 768"
+                  ></div>
+                </div>
+              </div>
+              <div
+                class="relative group transition-opacity duration-300 delay-500"
+              >
+                <div class="overflow-hidden rounded-lg">
+                  <div
+                    class="h-full opacity-50 image-placeholder-animation"
+                    style="aspect-ratio: 576 / 768"
+                  ></div>
+                </div>
+              </div>
+              <div
+                class="relative group transition-opacity duration-300 delay-500"
+              >
+                <div class="overflow-hidden rounded-lg">
+                  <div
+                    class="h-full opacity-50 image-placeholder-animation"
+                    style="aspect-ratio: 512 / 512"
+                  ></div>
+                </div>
+              </div>
+              <div
+                class="relative group transition-opacity duration-300 delay-500"
+              >
+                <div class="overflow-hidden rounded-lg">
+                  <div
+                    class="h-full opacity-50 image-placeholder-animation"
+                    style="aspect-ratio: 1024 / 1536"
+                  ></div>
+                </div>
+              </div> -->
+            </div>
+            <div id="images-column-4" class="images-column">
+              <!-- <div
+                class="relative group transition-opacity duration-300 delay-500"
+              >
+                <div class="overflow-hidden rounded-lg">
+                  <div
+                    class="h-full opacity-50 image-placeholder-animation"
+                    style="aspect-ratio: 512 / 512"
+                  ></div>
+                </div>
+              </div>
+              <div
+                class="relative group transition-opacity duration-300 delay-500"
+              >
+                <div class="overflow-hidden rounded-lg">
+                  <div
+                    class="h-full opacity-50 image-placeholder-animation"
+                    style="aspect-ratio: 512 / 512"
+                  ></div>
+                </div>
+              </div>
+              <div
+                class="relative group transition-opacity duration-300 delay-500"
+              >
+                <div class="overflow-hidden rounded-lg">
+                  <div
+                    class="h-full opacity-50 image-placeholder-animation"
+                    style="aspect-ratio: 576 / 768"
+                  ></div>
+                </div>
+              </div>
+              <div
+                class="relative group transition-opacity duration-300 delay-500"
+              >
+                <div class="overflow-hidden rounded-lg">
+                  <div
+                    class="h-full opacity-50 image-placeholder-animation"
+                    style="aspect-ratio: 768 / 504"
+                  ></div>
+                </div>
+              </div>
+              <div
+                class="relative group transition-opacity duration-300 delay-500"
+              >
+                <div class="overflow-hidden rounded-lg">
+                  <div
+                    class="h-full opacity-50 image-placeholder-animation"
+                    style="aspect-ratio: 1024 / 1536"
+                  ></div>
+                </div>
+              </div> -->
+            </div>
+            <div id="images-column-5" class="images-column">
+              <!-- <div
+                class="relative group transition-opacity duration-300 delay-500"
+              >
+                <div class="overflow-hidden rounded-lg">
+                  <div
+                    class="h-full opacity-50 image-placeholder-animation"
+                    style="aspect-ratio: 512 / 512"
+                  ></div>
+                </div>
+              </div>
+              <div
+                class="relative group transition-opacity duration-300 delay-500"
+              >
+                <div class="overflow-hidden rounded-lg">
+                  <div
+                    class="h-full opacity-50 image-placeholder-animation"
+                    style="aspect-ratio: 512 / 512"
+                  ></div>
+                </div>
+              </div>
+              <div
+                class="relative group transition-opacity duration-300 delay-500"
+              >
+                <div class="overflow-hidden rounded-lg">
+                  <div
+                    class="h-full opacity-50 image-placeholder-animation"
+                    style="aspect-ratio: 768 / 576"
+                  ></div>
+                </div>
+              </div>
+              <div
+                class="relative group transition-opacity duration-300 delay-500"
+              >
+                <div class="overflow-hidden rounded-lg">
+                  <div
+                    class="h-full opacity-50 image-placeholder-animation"
+                    style="aspect-ratio: 768 / 504"
+                  ></div>
+                </div>
+              </div>
+              <div
+                class="relative group transition-opacity duration-300 delay-500"
+              >
+                <div class="overflow-hidden rounded-lg">
+                  <div
+                    class="h-full opacity-50 image-placeholder-animation"
+                    style="aspect-ratio: 512 / 512"
+                  ></div>
+                </div>
+              </div> -->
             </div>
           </div>
         </div>
+      </div>
+    </div>
+    <div>
+      <div
+        id="image-dialog-container"
+        class="fixed inset-0 hidden justify-center items-center z-[60] bg-black bg-opacity-80 backdrop-blur"
+      >
         <div
-          class="border-solid border-gray-600 shrink border-r border-l grow hidden lg:flex transition-all duration-500 relative"
+          class="relative rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.2)] lg:max-w-[90%] lg:w-auto w-full h-full lg:h-4/5"
         >
-          <div id="float-btn" class="z-10 invisible lg:visible">
-            <img
-              src="https://pixor.ai/_nuxt/floatBtn.1daee568.svg"
-              alt="float button"
-              class="w-8 absolute right-0 top-8"
-            /><img
-              id="arrow"
-              src="https://pixor.ai/_nuxt/arrowRight.fdeed9ea.svg"
-              alt="float button"
-              class="w-2 absolute right-3 top-20 z-20 transition-all duration-500"
-            />
+          <div
+            id="close-image-dialog"
+            class="rounded-full bg-gray-700 bg-opacity-50 flex items-center justify-center cursor-pointer absolute top-0 lg:right-[-40px] w-8 h-8 right-0 z-50 max-lg:hidden"
+          >
+            <img src="../static/images/close_icon.svg" alt="" />
           </div>
-
-          <div class="w-full h-full relative">
+          <div class="h-full max-lg:h-[calc(100%-40px)] w-full max-lg:mt-10">
             <div
-              class="w-full h-full flex justify-center items-center content-center relative overflow-hidden"
+              class="lg:rounded-2xl lg:w-auto w-full h-full max-h-full flex lg:flex-row flex-col bg-gray-900 lg:overflow-y-visible overflow-y-auto"
             >
-              <div class="w-full h-full flex justify-center items-center">
+              <div
+                class="lg:rounded-md lg:p-[6px] lg:max-h-full max-h-[80%] h-full flex items-center justify-center"
+              >
                 <div
-                  class="flex w-full h-full relative rounded-[6px] shadow-md justify-center"
+                  id="transferred-image-dialog"
+                  class="overflow-hidden relative lg:rounded-[10px] h-full w-fit"
                 >
                   <img
-                    id="img-center"
-                    class="scale-125 transition-all duration-500"
-                    src="../static/images/main.png"
-                    alt="Default Create"
+                    src=""
+                    class="object-contain h-full w-auto flex"
+                    decoding="async"
+                    style="aspect-ratio: 1 / 1"
+                  />
+                </div>
+                <div
+                  id="raw-image-dialog-left"
+                  class="overflow-hidden lg:rounded-[10px] h-full w-fit hidden"
+                >
+                  <img
+                    src=""
+                    class="object-contain h-full w-auto flex"
+                    decoding="async"
                   />
                 </div>
               </div>
-            </div>
-            <div
-              id="btn-download-image"
-              class="absolute bottom-5 right-10 group/menu hidden"
-            >
               <div
-                class="bg-[#110F1A] rounded-lg px-3 py-[6px] mt-2 absolute invisible group-hover/menu:visible group-hover:visible max-sm:hidden left-1/2 -translate-x-1/2 -translate-y-14 w-fit"
+                class="flex flex-col toolbar lg:min-h-full lg:h-full w-full lg:max-w-[320px] lg:rounded-r-2xl lg:rounded-l-lg bg-[#18212F] lg:overflow-auto lg:w-[320px] lg:min-w-[320px] hidden-scroll"
               >
-                <svg
-                  height="6"
-                  viewBox="0 0 12 6"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="absolute top-[36px] left-1/2 -translate-x-1/2 rotate-180"
-                >
-                  <path
-                    d="M6 5.24537e-07L-4.29138e-07 6L12 6L6 5.24537e-07Z"
-                    fill="#110F1A"
-                  ></path>
-                </svg>
-                <span
-                  class="whitespace-nowrap text-white text-sm font-normal leading-tight"
-                >
-                  Download image
-                </span>
-              </div>
-              <div
-                class="flex items-center justify-center relative w-12 h-12 rounded-full bg-[#4f4f4f] cursor-pointer btn-download"
-              >
-                <i class="fa-solid fa-download text-[#0e121e]"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          id="list-img-container"
-          class="border-solid px-5 py-1 border-gray-600 h-full grow-0 shrink-0 hidden md:flex max-lg:invisible transition-all duration-500 z-20 w-0 lg:w-80"
-        >
-          <div
-            class="p-0 h-full w-full transition-[width] ease-linear delay-200 overflow-y-scroll hidden-scroll"
-          >
-            <div class="tabs text-white">
-              <div class="sticky top-0 z-50 bg-[#030712] p-1">
-                <div
-                  class="bg-[#1E1B26] h-12 flex items-center px-1 rounded-xl"
-                >
+                <div class="sticky top-0 bg-[#18212F] px-4 pt-4 z-40">
                   <div
-                    class="w-50 h-10 justify-center items-center gap-2 inline-flex text-white bg-[#302D39] rounded-lg font-medium w-full"
-                    style="z-index: 2"
-                  >
-                    <div
-                      class="text-base leading-normal text-white font-bold"
-                      style="z-index: 2"
-                    >
-                      <span>Creations</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="relative">
-                {% if user_auth.is_auth %}
-                <div
-                  id="list-images"
-                  class="flex flex-wrap gap-2 justify-between relative overflow-auto max-[400px]:p-3 h-full bg-[#030712] text-white"
-                >
-                  {% for image in list_images %}
-                  <div
-                    class="image-generated w-[136px] h-48 opacity-50 hover:opacity-100 image-placeholder-animation rounded-md overflow-hidden"
-                  >
-                    <div class="h-full w-full flex justify-center items-center">
-                      <div
-                        class="flex w-full h-full relative rounded-[6px] shadow-md justify-center"
-                      >
-                        <img
-                          class="transition-all duration-500 object-fill cursor-pointer"
-                          src="{{image}}"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  {% endfor %}
-                </div>
-                {% else %}
-                <div
-                  class="relative overflow-auto py-5 max-[400px]:p-3 h-full bg-[#030712] text-white"
-                  data-v-5802cc34=""
-                >
-                  <div
-                    class="flex justify-center items-center flex-col"
-                    data-v-5802cc34=""
+                    class="pb-4 flex gap-2 border-solid border-b border-gray-600"
                   >
                     <img
-                      src="../static/images/image.png"
-                      alt="No Image"
-                      data-v-5802cc34=""
-                    /><span data-v-5802cc34=""
-                      >Login to see your creation.</span
-                    >
+                      id="user-avatar-dialog"
+                      src=""
+                      class="w-10 h-10 rounded-full cursor-default"
+                      alt=""
+                    />
+                    <p
+                      id="user-name-dialog"
+                      class="text-xs text-justify my-auto"
+                    ></p>
                   </div>
                 </div>
-                {% endif %}
+                <div class="p-4 lg:pb-16 flex flex-col gap-4">
+                  <div
+                    class="text-sm w-full flex flex-col gap-4 border-solid border-b-[1px] border-gray-600 pb-4"
+                  >
+                    <div
+                      id="raw-image-dialog-right"
+                      class="w-1/3 lg:w-[100px] max-w-full group hidden"
+                    >
+                      <div class="relative">
+                        <div
+                          class="overflow-hidden rounded-md cursor-pointer opacity-60 group-hover:scale-95"
+                        >
+                          <img
+                            src=""
+                            class="object-contain h-full w-auto flex"
+                            decoding="async"
+                          /><svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            xmlns:xlink="http://www.w3.org/1999/xlink"
+                            width="17"
+                            height="17"
+                            viewBox="0 0 14 14"
+                            class="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 opacity-80 cursor-pointer"
+                          >
+                            <g>
+                              <path
+                                d="M6,0L8,0L8,1L12,1C13.1046,1,14,1.89543,14,3L14,11C14,12.1046,13.1046,13,12,13L8,13L8,14L6,14L6,13L2,13C0.895431,13,0,12.1046,0,11L0,3C0,1.89543,0.895431,1,2,1L6,1L6,0ZM8,11.5L12,11.5C12.2455,11.5,12.4496,11.3231,12.4919,11.0899L12.5,11L12.5,3C12.5,2.75454,12.3231,2.55039,12.0899,2.50806L12,2.5L8,2.5L8,11.5Z"
+                                fill="white"
+                                fill-rule="evenodd"
+                                fill-opacity="1"
+                              ></path>
+                            </g>
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                    <div id="text-prompt-container" class="flex flex-col gap-2">
+                      <div class="text-gray-400 relative flex gap-2">
+                        <div>Text Prompt</div>
+                        <svg
+                          width="20"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="cursor-pointer hover:opacity-50"
+                        >
+                          <g id="vuesax/linear/copy">
+                            <g id="copy">
+                              <path
+                                id="Vector"
+                                d="M13.3346 10.7501V14.2501C13.3346 17.1667 12.168 18.3334 9.2513 18.3334H5.7513C2.83464 18.3334 1.66797 17.1667 1.66797 14.2501V10.7501C1.66797 7.83341 2.83464 6.66675 5.7513 6.66675H9.2513C12.168 6.66675 13.3346 7.83341 13.3346 10.7501Z"
+                                stroke="#9CA3AF"
+                                stroke-width="1.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                              ></path>
+                              <path
+                                id="Vector_2"
+                                d="M18.3346 5.75008V9.25008C18.3346 12.1667 17.168 13.3334 14.2513 13.3334H13.3346V10.7501C13.3346 7.83341 12.168 6.66675 9.2513 6.66675H6.66797V5.75008C6.66797 2.83341 7.83464 1.66675 10.7513 1.66675H14.2513C17.168 1.66675 18.3346 2.83341 18.3346 5.75008Z"
+                                stroke="#9CA3AF"
+                                stroke-width="1.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                              ></path>
+                            </g>
+                          </g>
+                        </svg>
+                      </div>
+                      <div id="text-prompt-dialog"></div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="lg:bg-[#18212F] p-4 lg:absolute lg:bottom-0 rounded-2xl w-full"
+                  style="width: inherit; max-width: inherit"
+                >
+                  <div class="relative flex justify-end">
+                    <button
+                      id="btn-download-dialog"
+                      class="flex items-center justify-center hover:bg-gray-500/40 border border-solid border-gray-700/80 rounded-lg h-9 hover:brightness-110 shadow-md px-4"
+                    >
+                      <svg
+                        width="21"
+                        height="20"
+                        viewBox="0 0 21 20"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="mr-2"
+                      >
+                        <g id="vuesax/outline/import">
+                          <g id="import">
+                            <path
+                              id="Vector"
+                              d="M10.4008 12.4916C10.2424 12.4916 10.0841 12.4333 9.95911 12.3083L7.82578 10.1749C7.58411 9.93327 7.58411 9.53327 7.82578 9.2916C8.06745 9.04993 8.46745 9.04993 8.70911 9.2916L10.4008 10.9833L12.0924 9.2916C12.3341 9.04993 12.7341 9.04993 12.9758 9.2916C13.2174 9.53327 13.2174 9.93327 12.9758 10.1749L10.8424 12.3083C10.7174 12.4333 10.5591 12.4916 10.4008 12.4916Z"
+                              fill="white"
+                            ></path>
+                            <path
+                              id="Vector_2"
+                              d="M10.3984 12.4333C10.0568 12.4333 9.77344 12.1499 9.77344 11.8083V3.33325C9.77344 2.99159 10.0568 2.70825 10.3984 2.70825C10.7401 2.70825 11.0234 2.99159 11.0234 3.33325V11.8083C11.0234 12.1499 10.7401 12.4333 10.3984 12.4333Z"
+                              fill="white"
+                            ></path>
+                            <path
+                              id="Vector_3"
+                              d="M10.4987 17.4416C6.20703 17.4416 3.20703 14.4416 3.20703 10.1499C3.20703 9.80824 3.49036 9.5249 3.83203 9.5249C4.1737 9.5249 4.45703 9.80824 4.45703 10.1499C4.45703 13.7082 6.94036 16.1916 10.4987 16.1916C14.057 16.1916 16.5404 13.7082 16.5404 10.1499C16.5404 9.80824 16.8237 9.5249 17.1654 9.5249C17.507 9.5249 17.7904 9.80824 17.7904 10.1499C17.7904 14.4416 14.7904 17.4416 10.4987 17.4416Z"
+                              fill="white"
+                            ></path>
+                          </g>
+                        </g>
+                      </svg>
+                      <span class="text-sm">Download</span>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -653,17 +538,13 @@
           id="close-login-dialog"
           class="rounded-full bg-gray-700 bg-opacity-50 flex items-center justify-center cursor-pointer absolute top-0 lg:right-[-40px] w-8 h-8 right-0 z-50 max-lg:hidden"
         >
-          <img src="https://pixor.ai/_nuxt/icon-close.c25e77ae.svg" alt="" />
+          <img src="../static/images/close_icon.svg" alt="" />
         </div>
         <div
           class="absolute lg:hidden bg-slate-800 opacity-90 z-[100] w-full flex h-10 shadow-xl"
         >
           <div class="flex items-center justify-center cursor-pointer ml-3">
-            <img
-              src="https://pixor.ai/_nuxt/icon-back.a3881bb4.svg"
-              alt=""
-              class="h-7 w-7"
-            />
+            <img src="../static/images/back_icon.svg" alt="" class="h-7 w-7" />
           </div>
         </div>
 
@@ -688,7 +569,7 @@
                       class="absolute h-6 left-3 top-[4px] max-[450px]:left-0.5"
                     >
                       <img
-                        src="https://pixor.ai/_nuxt/icon-google.12dc077c.svg"
+                        src="../static/images/google_icon.svg"
                         alt=""
                         heigh="30"
                         width="30"
@@ -716,7 +597,8 @@
     </div>
     {% endif %}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module" src="../static/js/firebase.js"></script>
     <script src="../static/js/jquery.js"></script>
-    <script src="../static/js/script.js"></script>
+    <script type="module" src="../static/js/script.js"></script>
   </body>
 </html>
