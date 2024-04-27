@@ -10,7 +10,11 @@ import base64
 import os
 import pathlib
 import requests
-from .firebase_utils import create_user, add_image, get_list_images
+from .firebase_utils import (
+    create_user,
+    add_image,
+    get_list_images,
+)
 from werkzeug.utils import secure_filename
 from datetime import datetime
 from google.oauth2 import id_token
@@ -62,9 +66,24 @@ def home():
         "user_avatar": request.cookies.get("user_picture"),
         "user_name": request.cookies.get("user_name"),
     }
-    list_images = get_list_images(user_email)
     return render_template(
         "index.html",
+        user_auth=user_auth,
+    )
+
+
+@views.route("/create")
+def create():
+    global user_email
+    user_email = request.cookies.get("user_email")
+    user_auth = {
+        "is_auth": "user_email" in request.cookies,
+        "user_avatar": request.cookies.get("user_picture"),
+        "user_name": request.cookies.get("user_name"),
+    }
+    list_images = get_list_images(user_email)
+    return render_template(
+        "create.html",
         user_auth=user_auth,
         options_dimensions=options_dimensions,
         list_images=list_images,
