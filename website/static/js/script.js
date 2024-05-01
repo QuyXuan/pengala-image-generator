@@ -1,4 +1,9 @@
-import { fetchImageURL, fetchImageFromExplore } from "./firebase.js";
+import {
+  fetchImageURL,
+  fetchImageFromExplore,
+  fetchImageFromCreate,
+  checkUserExist,
+} from "./firebase.js";
 
 $(document).ready(function () {
   FunctionModule.Init();
@@ -6,9 +11,9 @@ $(document).ready(function () {
 });
 
 const FunctionModule = (function () {
-  let take = 10;
-  let loading = false;
-  let lastKey = null;
+  let takeExplore = 10;
+  let loadingExplore = false;
+  let lastCreateTimeExplore = null;
   let columnCount = 5;
   let currentColumn = 1;
 
@@ -27,9 +32,14 @@ const FunctionModule = (function () {
   const Init = function () {
     try {
       if (window.location.pathname === "/") {
-        fetchImagesInfiniteScroll();
+        fetchExploreImagesInfiniteScroll();
       } else if (window.location.pathname === "/create") {
-        $("#text-prompt").focus();
+        checkUser().then((exist) => {
+          if (exist) {
+            $("#text-prompt").focus();
+            fetchCreateImagesInfiniteScroll();
+          }
+        });
       }
     } catch (e) {
       console.log("Init: " + e.message);
@@ -42,9 +52,9 @@ const FunctionModule = (function () {
         if (
           $(this).scrollTop() + $(this).height() >=
             $(this)[0].scrollHeight - 100 &&
-          !loading
+          !loadingExplore
         ) {
-          fetchImagesInfiniteScroll();
+          fetchExploreImagesInfiniteScroll();
         }
       });
 
@@ -80,7 +90,7 @@ const FunctionModule = (function () {
         downloadImage($("#img-center").attr("src"));
       });
 
-      $("#user-avatar").on("click", function () {
+      $(".user-avatar").on("click", function () {
         toggleUserAvatar();
       });
 
@@ -94,15 +104,15 @@ const FunctionModule = (function () {
         $("#login-dialog").hide();
       });
 
-      $("#login-btn").on("click", function () {
+      $(".login-btn").on("click", function () {
         $("#login-dialog").show();
       });
 
-      $("#btn-login-google").on("click", function () {
+      $(".btn-login-google").on("click", function () {
         openPopupLoginWithGoogle();
       });
 
-      $("#btn-logout").on("click", function () {
+      $(".btn-logout").on("click", function () {
         logout();
       });
 
@@ -133,6 +143,12 @@ const FunctionModule = (function () {
         downloadImage(
           $("#transferred-image-dialog").children("img").attr("src")
         );
+      });
+
+      $("#copy-text-prompt-dialog").on("click", function () {
+        const textPrompt = $("#text-prompt-dialog");
+        navigator.clipboard.writeText(textPrompt.text());
+        showSuccess("Text copied to clipboard");
       });
     } catch (e) {
       console.log("InitEvents: " + e.message);
@@ -185,101 +201,124 @@ const FunctionModule = (function () {
   };
 
   const generateImage = function () {
-    const loadingOverlay = $("#loading-overlay");
-    const textPrompt = $("#text-prompt");
-    let height,
-      width = 0;
-    $(".option").each(function () {
-      if ($(this).hasClass("bg-[#3B3947]")) {
-        const size = $(this).children("div").first().text().split("x");
-        height = parseInt(size[0], 10);
-        width = parseInt(size[1], 10);
+    checkUser().then((exist) => {
+      if (!exist) {
+        showWarning("Please login to generate image");
+        return;
+      } else {
+        const loadingOverlay = $("#loading-overlay");
+        const textPrompt = $("#text-prompt");
+        let height,
+          width = 0;
+        $(".option").each(function () {
+          if ($(this).hasClass("bg-[#3B3947]")) {
+            const size = $(this).children("div").first().text().split("x");
+            height = parseInt(size[0], 10);
+            width = parseInt(size[1], 10);
+          }
+        });
+
+        loadingOverlay.addClass("load");
+        if ($("#checkbox-switch-mode").is(":checked")) {
+          $.ajax({
+            type: "POST",
+            url: "/image-to-image",
+            data: {
+              text_prompt: textPrompt.val(),
+            },
+            success: function (response) {
+              textPrompt.val("");
+              $(".btn-gradient-transition").attr("disabled", "disabled");
+              if (response.error) {
+                showError(response.error);
+                return;
+              }
+              const imageCenter = $("#img-center");
+              getMetaImage(response.image_url, function (width, height) {
+                imageCenter.css({
+                  "aspect-ratio": width / height,
+                });
+              });
+              imageCenter.attr("src", response.image_url);
+              addImageHTML(response.image_url);
+              $("#btn-download-image").show();
+              loadingOverlay.removeClass("load");
+              showSuccess("Image generated successfully");
+            },
+            error: function (error) {
+              loadingOverlay.removeClass("load");
+              textPrompt.val("");
+              $(".btn-gradient-transition").attr("disabled", "disabled");
+              showError("Error generating image");
+              console.log(error);
+            },
+          });
+        } else {
+          $.ajax({
+            type: "POST",
+            url: "/text-to-image",
+            data: {
+              text_prompt: textPrompt.val(),
+              height: height,
+              width: width,
+            },
+            success: function (response) {
+              textPrompt.val("");
+              $(".btn-gradient-transition").attr("disabled", "disabled");
+              if (response.error) {
+                showError(response.error);
+                return;
+              }
+              const imageCenter = $("#img-center");
+              getMetaImage(response.image_url, function (width, height) {
+                imageCenter.css({
+                  "aspect-ratio": width / height,
+                });
+              });
+              imageCenter.attr("src", response.image_url);
+              addImageHTML(response.image_url);
+              $("#btn-download-image").show();
+              loadingOverlay.removeClass("load");
+              showSuccess("Image generated successfully");
+            },
+            error: function (error) {
+              loadingOverlay.removeClass("load");
+              textPrompt.val("");
+              $(".btn-gradient-transition").attr("disabled", "disabled");
+              showError("Error generating image");
+              console.log(error);
+            },
+          });
+        }
       }
     });
-
-    loadingOverlay.addClass("load");
-    if ($("#checkbox-switch-mode").is(":checked")) {
-      $.ajax({
-        type: "POST",
-        url: "/image-to-image",
-        data: {
-          text_prompt: textPrompt.val(),
-        },
-        success: function (response) {
-          textPrompt.val("");
-          $(".btn-gradient-transition").attr("disabled", "disabled");
-          if (response.error) {
-            showError(response.error);
-            return;
-          }
-          const imageCenter = $("#img-center");
-          imageCenter.attr("src", response.image_url);
-          addImageHTML(response.image_url);
-          $("#btn-download-image").show();
-          loadingOverlay.removeClass("load");
-          showSuccess("Image generated successfully");
-        },
-        error: function (error) {
-          loadingOverlay.removeClass("load");
-          textPrompt.val("");
-          $(".btn-gradient-transition").attr("disabled", "disabled");
-          showError("Error generating image");
-          console.log(error);
-        },
-      });
-    } else {
-      $.ajax({
-        type: "POST",
-        url: "/text-to-image",
-        data: {
-          text_prompt: textPrompt.val(),
-          height: height,
-          width: width,
-        },
-        success: function (response) {
-          textPrompt.val("");
-          $(".btn-gradient-transition").attr("disabled", "disabled");
-          if (response.error) {
-            showError(response.error);
-            return;
-          }
-          const imageCenter = $("#img-center");
-          imageCenter.attr("src", response.image_url);
-          addImageHTML(response.image_url);
-          $("#btn-download-image").show();
-          loadingOverlay.removeClass("load");
-          showSuccess("Image generated successfully");
-        },
-        error: function (error) {
-          loadingOverlay.removeClass("load");
-          textPrompt.val("");
-          $(".btn-gradient-transition").attr("disabled", "disabled");
-          showError("Error generating image");
-          console.log(error);
-        },
-      });
-    }
   };
 
   const addImageHTML = function (src) {
-    const listImages = $("#list-images");
-    const newDiv = $("<div></div>");
-    newDiv.addClass(
-      "image-generated w-[136px] h-48 opacity-50 hover:opacity-100 image-placeholder-animation rounded-md overflow-hidden"
-    );
-    newDiv.html(
-      `<div class="h-full w-full flex justify-center items-center">
-        <div
-          class="flex w-full h-full relative rounded-[6px] shadow-md justify-center"
-        >
-          <img
-            class="transition-all duration-500 object-fill cursor-pointer"
-            src="${src}"
-          />
-        </div>
-      </div>`
-    );
-    listImages.prepend(newDiv);
+    getMetaImage(src, function (width, height) {
+      const listImages = $("#list-images");
+      const newDiv = $("<div></div>");
+      newDiv.addClass(
+        "image-generated w-[136px] h-48 opacity-50 hover:opacity-100 image-placeholder-animation rounded-md overflow-hidden"
+      );
+      newDiv.html(
+        `<div class="h-full w-full flex justify-center items-center">
+          <div
+            class="flex w-full h-full relative rounded-[6px] shadow-md justify-center"
+          >
+            <img
+              class="transition-all duration-500 object-fill cursor-pointer"
+              src="${src}"
+              style="aspect-ratio: ${width} / ${height};"
+            />
+          </div>
+        </div>`
+      );
+      newDiv.on("click", function () {
+        showImage(this);
+      });
+      listImages.prepend(newDiv);
+    });
   };
 
   const importImage = function (element) {
@@ -436,17 +475,13 @@ const FunctionModule = (function () {
   };
 
   const toggleUserAvatar = function () {
-    $("#user-info-container").toggle();
+    $(".user-info-container").toggle();
   };
 
   const logout = function () {
-    var cookies = document.cookie.split(";");
-    for (var i = 0; i < cookies.length; i++) {
-      var cookie = cookies[i];
-      var eqPos = cookie.indexOf("=");
-      var name = eqPos > -1 ? cookie.substring(0, eqPos) : cookie.trim();
-      document.cookie =
-        name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+    var cookies = $.cookie();
+    for (var key in cookies) {
+      $.removeCookie(key, { path: "/" });
     }
     localStorage.clear();
     sessionStorage.clear();
@@ -467,16 +502,15 @@ const FunctionModule = (function () {
     });
   };
 
-  const fetchImagesInfiniteScroll = function () {
-    loading = true;
-    fetchImageFromExplore(take, lastKey)
-      .then((snapshotValue) => {
-        const images = Object.values(snapshotValue);
+  const fetchExploreImagesInfiniteScroll = function () {
+    loadingExplore = true;
+    fetchImageFromExplore(takeExplore, lastCreateTimeExplore)
+      .then((images) => {
         if (images.length === 0) {
           showWarning("No more images to show");
           return;
         }
-        lastKey = Object.keys(snapshotValue).pop();
+        lastCreateTimeExplore = images[images.length - 1].create_time;
         images.forEach((image) => {
           getMetaImage(image.image_transferred_url, function (width, height) {
             const imageRawDiv = image.image_raw_url
@@ -556,13 +590,62 @@ const FunctionModule = (function () {
             currentColumn = (currentColumn % columnCount) + 1;
           });
         });
-        loading = false;
+        loadingExplore = false;
       })
       .catch((error) => {
         showError("Error fetching images");
         console.log(error);
-        loading = false;
+        loadingExplore = false;
       });
+  };
+
+  const fetchCreateImagesInfiniteScroll = function () {
+    const email = $.cookie("user_email");
+    fetchImageFromCreate(email).then((images) => {
+      if (images.length === 0) {
+        showWarning("No more images to show");
+        return;
+      }
+      console.table(images);
+      images.forEach((image) => {
+        getMetaImage(image.image_transferred_url, function (width, height) {
+          const newDiv = $("<div></div>");
+          newDiv.addClass(
+            "image-generated w-[136px] h-48 opacity-50 hover:opacity-100 image-placeholder-animation rounded-md overflow-hidden"
+          );
+          newDiv.html(
+            `<div class="h-full w-full flex justify-center items-center">
+              <div
+                class="flex w-full h-full relative rounded-[6px] shadow-md justify-center"
+              >
+                <img
+                  class="transition-all duration-500 object-fill cursor-pointer"
+                  src="${image.image_transferred_url}"
+                  style="aspect-ratio: ${height} / ${width};"
+                />
+              </div>
+            </div>`
+          );
+          newDiv.on("click", function () {
+            showImage(this);
+          });
+          $("#list-images").prepend(newDiv);
+        });
+      });
+    });
+  };
+
+  const checkUser = async function () {
+    if (!$.cookie("user_email")) {
+      return false;
+    }
+    try {
+      const exist = await checkUserExist($.cookie("user_email"));
+      return exist;
+    } catch (error) {
+      console.log("Error checking user exist:", error);
+      return false;
+    }
   };
 
   return {

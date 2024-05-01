@@ -36,23 +36,35 @@ def create_user(email):
         ref.child("users").push({"email": email})
 
 
-def add_image(base64_image, email):
-    image = base64.b64decode(base64_image)
-    blob = bucket.blob(f"images/{uuid.uuid4()}.png")
-    blob.upload_from_string(image, content_type="image/png")
-
-    image_url = get_signed_url(blob.name)
+def add_image(transferred_image_base64, raw_image_base64, prompt, user_auth):
+    image_transferred_url = upload_image(transferred_image_base64)
+    image_raw_url = None
+    if raw_image_base64:
+        image_raw_url = upload_image(raw_image_base64)
 
     users_ref = ref.child("users")
-    users_snapshot = users_ref.order_by_child("email").equal_to(email).get()
+    users_snapshot = (
+        users_ref.order_by_child("email").equal_to(user_auth["user_email"]).get()
+    )
+
+    obj = {
+        "prompt": prompt if pd.notnull(prompt) else None,
+        "image_transferred_url": image_transferred_url,
+        "image_raw_url": image_raw_url,
+        "create_time": {".sv": "timestamp"},
+        "user_avatar": user_auth["user_avatar"],
+        "user_name": user_auth["user_name"],
+    }
 
     if users_snapshot:
         for user_id, user_data in users_snapshot.items():
             images = user_data.get("images", [])
-            images.append(image_url)
+            images.append(obj)
             users_ref.child(user_id).update({"images": images})
 
-    return image_url
+    add_image_to_explore(obj)
+
+    return image_transferred_url
 
 
 def upload_image(base64_image):
@@ -71,7 +83,12 @@ def get_signed_url(image_path):
     return signed_url
 
 
-def add_image_to_explore():
+def add_image_to_explore(obj):
+    explore_ref = ref.child("explore")
+    explore_ref.push(obj)
+
+
+def add_list_image_to_explore():
     explore_ref = ref.child("explore")
     df = pd.read_csv("E:\ImageGeneratorFlask\website\Cleared_image_data_Pixor.csv")
 
@@ -97,15 +114,6 @@ def add_image_to_explore():
             "user_name": "Hung Trinh",
         }
         explore_ref.push(obj)
-
-
-def get_image_from_explore():
-    explore_ref = ref.child("explore")
-    explore_snapshot = explore_ref.get()
-    if explore_snapshot:
-        for explore_id, explore_data in explore_snapshot.items():
-            return explore_data
-    return None
 
 
 def get_list_images(email):
