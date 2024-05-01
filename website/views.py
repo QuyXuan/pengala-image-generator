@@ -54,17 +54,17 @@ flow = Flow.from_client_secrets_file(
     ],
     redirect_uri="http://localhost:5000/callback",
 )
-user_email = None
+user_auth = None
 
 
 @views.route("/")
 def home():
-    global user_email
-    user_email = request.cookies.get("user_email")
+    global user_auth
     user_auth = {
         "is_auth": "user_email" in request.cookies,
         "user_avatar": request.cookies.get("user_picture"),
         "user_name": request.cookies.get("user_name"),
+        "user_email": request.cookies.get("user_email"),
     }
     return render_template(
         "index.html",
@@ -74,19 +74,17 @@ def home():
 
 @views.route("/create")
 def create():
-    global user_email
-    user_email = request.cookies.get("user_email")
+    global user_auth
     user_auth = {
         "is_auth": "user_email" in request.cookies,
         "user_avatar": request.cookies.get("user_picture"),
         "user_name": request.cookies.get("user_name"),
+        "user_email": request.cookies.get("user_email"),
     }
-    list_images = get_list_images(user_email)
     return render_template(
         "create.html",
         user_auth=user_auth,
         options_dimensions=options_dimensions,
-        list_images=list_images,
     )
 
 
@@ -170,13 +168,18 @@ def text_to_image():
     )
 
     if response.status_code != 200:
-        print(response.json())
         return jsonify({"error": "Server error!"})
 
     data = response.json()
 
     if "artifacts" in data and len(data["artifacts"]) > 0:
-        image_url = add_image(data["artifacts"][0]["base64"], user_email)
+        global user_auth
+        image_url = add_image(
+            transferred_image_base64=data["artifacts"][0]["base64"],
+            raw_image_base64=None,
+            prompt=text_prompt,
+            user_auth=user_auth,
+        )
 
         save_image_to_directory(data)
     else:
@@ -196,7 +199,6 @@ def text_to_image():
 @views.route("/image-to-image", methods=["POST"])
 def image_to_image():
     text_prompt = request.form.get("text_prompt")
-    print(image_imported_path)
     response = requests.post(
         f"{api_host}/v1/generation/{engine_id}/image-to-image",
         headers={
@@ -217,13 +219,19 @@ def image_to_image():
     )
 
     if response.status_code != 200:
-        print(response.json())
         return jsonify({"error": "Server error!"})
 
     data = response.json()
 
     if "artifacts" in data and len(data["artifacts"]) > 0:
-        image_url = add_image(data["artifacts"][0]["base64"], user_email)
+        global user_auth
+        raw_image_base64 = convert_image_to_base64(image_imported_path)
+        image_url = add_image(
+            transferred_image_base64=data["artifacts"][0]["base64"],
+            raw_image_base64=raw_image_base64,
+            prompt=text_prompt,
+            user_auth=user_auth,
+        )
         save_image_to_directory(data)
 
     else:
@@ -253,3 +261,9 @@ def save_image_to_directory(data):
         )
         with open(image_path, "wb") as f:
             f.write(base64.b64decode(image["base64"]))
+
+
+def convert_image_to_base64(image_path):
+    with open(image_path, "rb") as f:
+        image = f.read()
+    return base64.b64encode(image).decode("utf-8")
