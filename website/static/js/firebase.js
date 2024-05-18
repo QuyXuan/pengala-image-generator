@@ -11,6 +11,8 @@ import {
   query,
   orderByChild,
   limitToLast,
+  limitToFirst,
+  startAfter,
   endBefore,
   equalTo,
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
@@ -67,6 +69,61 @@ export const fetchImageFromExplore = async (take, lastCreateTime = null) => {
     } else {
       console.log("No images found.");
       return [];
+    }
+  } catch (error) {
+    console.error("Error fetching images:", error);
+    throw error;
+  }
+};
+
+export const fetchImageFromMyCreation = async (
+  email,
+  take,
+  lastCreateTime = null
+) => {
+  const usersRef = dbRef(database, "users");
+
+  try {
+    // Lấy reference theo email
+    const userQuery = query(usersRef, orderByChild("email"), equalTo(email));
+    const usersSnapshot = await get(userQuery);
+
+    // Điều này sẽ giả sử bạn có một người dùng duy nhất với email này
+    // Nếu có nhiều người dùng, bạn cần lọc thêm
+    if (usersSnapshot.exists()) {
+      const userId = Object.keys(usersSnapshot.val())[0];
+      const imagesRef = dbRef(database, `users/${userId}/images`);
+      let imagesQuery;
+
+      // Nếu lastCreateTime không phải null, chúng ta sẽ bắt đầu sau hình ảnh cuối cùng đã lấy
+      if (lastCreateTime) {
+        imagesQuery = query(
+          imagesRef,
+          orderByChild("create_time"),
+          startAfter(lastCreateTime),
+          limitToFirst(take)
+        );
+      } else {
+        // Nếu lastCreateTime là null, chúng ta sẽ lấy take số lượng hình đầu tiên
+        imagesQuery = query(
+          imagesRef,
+          orderByChild("create_time"),
+          limitToFirst(take)
+        );
+      }
+
+      const imagesSnapshot = await get(imagesQuery);
+      let imagesList = [];
+
+      if (imagesSnapshot.exists()) {
+        imagesSnapshot.forEach((child) => {
+          imagesList.push(child.val());
+        });
+      }
+      // console.table(imagesList);
+      return imagesList; // Danh sách hình ảnh
+    } else {
+      return []; // Nếu không có người dùng, trả về mảng rỗng
     }
   } catch (error) {
     console.error("Error fetching images:", error);

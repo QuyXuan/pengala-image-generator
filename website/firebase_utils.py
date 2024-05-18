@@ -90,6 +90,9 @@ def add_image_to_explore(obj):
 
 def add_list_image_to_explore():
     explore_ref = ref.child("explore")
+    users_ref = ref.child("users")
+    new_users = {"email": "trinhhung2804@gmail.com", "images": []}
+    user_result = users_ref.push(new_users)
     df = pd.read_csv("E:\ImageGeneratorFlask\website\Cleared_image_data_Pixor.csv")
 
     for index, row in df.iterrows():
@@ -112,8 +115,10 @@ def add_list_image_to_explore():
             "create_time": {".sv": "timestamp"},
             "user_avatar": "https://lh3.googleusercontent.com/a/ACg8ocIHZApLUcTZNTrFuBXg1fl79JMFhMRWxprFdAA6TcrdZbSQCA=s96-c",
             "user_name": "Hung Trinh",
+            "email": "trinhhung2804@gmail.com",
         }
         explore_ref.push(obj)
+        users_ref.child(user_result.key).child("images").push(obj)
 
 
 def get_list_images(email):

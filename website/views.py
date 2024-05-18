@@ -13,7 +13,6 @@ import requests
 from .firebase_utils import (
     create_user,
     add_image,
-    get_list_images,
 )
 from werkzeug.utils import secure_filename
 from datetime import datetime
@@ -72,8 +71,8 @@ def home():
     )
 
 
-@views.route("/create")
-def create():
+@views.route("/creation")
+def creation():
     global user_auth
     user_auth = {
         "is_auth": "user_email" in request.cookies,
@@ -82,7 +81,22 @@ def create():
         "user_email": request.cookies.get("user_email"),
     }
     return render_template(
-        "create.html",
+        "creation.html",
+        user_auth=user_auth,
+    )
+
+
+@views.route("/create/generate")
+def generate():
+    global user_auth
+    user_auth = {
+        "is_auth": "user_email" in request.cookies,
+        "user_avatar": request.cookies.get("user_picture"),
+        "user_name": request.cookies.get("user_name"),
+        "user_email": request.cookies.get("user_email"),
+    }
+    return render_template(
+        "generate.html",
         user_auth=user_auth,
         options_dimensions=options_dimensions,
     )

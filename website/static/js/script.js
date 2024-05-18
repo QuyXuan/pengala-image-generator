@@ -2,6 +2,7 @@ import {
   fetchImageURL,
   fetchImageFromExplore,
   fetchImageFromCreate,
+  fetchImageFromMyCreation,
   checkUserExist,
 } from "./firebase.js";
 
@@ -12,8 +13,11 @@ $(document).ready(function () {
 
 const FunctionModule = (function () {
   let takeExplore = 10;
+  let takeMyCreation = 10;
   let loadingExplore = false;
+  let loadingMyCreation = false;
   let lastCreateTimeExplore = null;
+  let lastCreateTimeMyCreation = null;
   let columnCount = 5;
   let currentColumn = 1;
 
@@ -40,6 +44,12 @@ const FunctionModule = (function () {
             fetchCreateImagesInfiniteScroll();
           }
         });
+      } else if (window.location.pathname === "/creation") {
+        checkUser().then((exist) => {
+          if (exist) {
+            fetchMyCreationImagesInfiniteScroll();
+          }
+        });
       }
     } catch (e) {
       console.log("Init: " + e.message);
@@ -55,6 +65,16 @@ const FunctionModule = (function () {
           !loadingExplore
         ) {
           fetchExploreImagesInfiniteScroll();
+        }
+      });
+
+      $(".creation").scroll(function () {
+        if (
+          $(this).scrollTop() + $(this).height() >=
+            $(this)[0].scrollHeight - 100 &&
+          !loadingMyCreation
+        ) {
+          fetchMyCreationImagesInfiniteScroll();
         }
       });
 
@@ -149,6 +169,36 @@ const FunctionModule = (function () {
         const textPrompt = $("#text-prompt-dialog");
         navigator.clipboard.writeText(textPrompt.text());
         showSuccess("Text copied to clipboard");
+      });
+
+      $("#btn-select-images").on("click", function () {
+        toggleSelectImages(this);
+      });
+
+      // $(".image-check").on("click", function () {
+      //   selectImage(this);
+      // });
+
+      $("#btn-close-modal-selected-images").on("click", function () {
+        toggleSelectImages($("#btn-select-images"));
+      });
+
+      $("#btn-download-list-imgs").on("click", function () {
+        $("#loading-overlay").addClass("load");
+        const listImages = $(".image-check");
+        const imageUrls = [];
+        listImages.each(function () {
+          if (
+            !$(this).children("div:first").children("img").hasClass("hidden")
+          ) {
+            imageUrls.push($(this).children("img").attr("src"));
+          }
+        });
+        if (imageUrls.length === 0) {
+          showWarning("No images selected");
+          return;
+        }
+        downloadAndZipImages(imageUrls);
       });
     } catch (e) {
       console.log("InitEvents: " + e.message);
@@ -599,6 +649,121 @@ const FunctionModule = (function () {
       });
   };
 
+  const fetchMyCreationImagesInfiniteScroll = function () {
+    loadingMyCreation = true;
+    fetchImageFromMyCreation(
+      "trinhhung2804@gmail.com",
+      takeMyCreation,
+      lastCreateTimeMyCreation
+    ).then((images) => {
+      if (images.length === 0) {
+        showWarning("No more images to show");
+        return;
+      }
+      lastCreateTimeMyCreation = images[images.length - 1].create_time;
+      images.forEach((image) => {
+        getMetaImage(image.image_transferred_url, function (width, height) {
+          const newDiv = $("<div></div>");
+          newDiv.addClass("relative group");
+          newDiv.html(`
+            <div class="image-check overflow-hidden rounded-md">
+              <img
+                src="${image.image_transferred_url}"
+                class="hover:cursor-zoom-in w-full h-full md:group-hover:brightness-50 transition-opacity duration-500 transition-hover flex"
+                decoding="async"
+                style="aspect-ratio: ${width} / ${height};"
+              />
+              <div
+                class="select-mode-overlay hidden absolute left-2 top-2 w-5 h-5"
+              >
+                <div
+                  class="rounded-full w-full h-full border-2"
+                  style="border-color: #A855F7;"
+                ></div>
+                <img
+                  class="hidden"
+                  src="https://staging.pixor.ai/_nuxt/rounded-checkbox.e55bfe2c.svg"
+                  alt=""
+                />
+              </div>
+              <div
+                class="normal-mode-overlay visible group-hover:visible delay-150 md:invisible"
+              >
+                <div
+                  class="absolute px-1 md:px-2 flex w-full right-0 top-1 md:top-2 justify-end"
+                >
+                  <div
+                    class="right-2 top-0 max-md:gap-0 bg-gray-950 bg-opacity-30 flex w-9 justify-center items-center gap-1 rounded-md cursor-pointer"
+                  >
+                    <div
+                      class="text-sm text-gray-50 font-semibold leading-4"
+                    >
+                      0
+                    </div>
+                    <div
+                      class="z-20 flex items-center justify-center max-md:p-1"
+                    >
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M10.0013 18.0417C9.74297 18.0417 9.49297 18.0084 9.28464 17.9334C6.1013 16.8417 1.04297 12.9667 1.04297 7.24171C1.04297 4.32504 3.4013 1.95837 6.3013 1.95837C7.70964 1.95837 9.0263 2.50837 10.0013 3.49171C10.9763 2.50837 12.293 1.95837 13.7013 1.95837C16.6013 1.95837 18.9596 4.33337 18.9596 7.24171C18.9596 12.975 13.9013 16.8417 10.718 17.9334C10.5096 18.0084 10.2596 18.0417 10.0013 18.0417ZM6.3013 3.20837C4.09297 3.20837 2.29297 5.01671 2.29297 7.24171C2.29297 12.9334 7.76797 16.1 9.69297 16.7584C9.84297 16.8084 10.168 16.8084 10.318 16.7584C12.2346 16.1 17.718 12.9417 17.718 7.24171C17.718 5.01671 15.918 3.20837 13.7096 3.20837C12.443 3.20837 11.268 3.80004 10.5096 4.82504C10.2763 5.14171 9.74297 5.14171 9.50964 4.82504C8.73464 3.79171 7.56797 3.20837 6.3013 3.20837Z"
+                          fill="white"
+                        ></path>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="flex flex-row place-content-between w-full absolute px-1 md:px-2 bottom-1 md:bottom-2 gap-1 md:justify-between justify-end"
+                >
+                  <div
+                    class="bg-transparent p-1 rounded-md left-0 w-32 xl:w-48 md:flex hidden"
+                  >
+                    <div
+                      class="whitespace-nowrap text-ellipsis overflow-hidden text-xs sm:text-sm 2xl:text-base text-white"
+                    ></div>
+                  </div>
+                  <button
+                    class="p-1 rounded-md bg-gray-950 bg-opacity-30 hover:bg-opacity-60 right-0 flex place-items-center"
+                  >
+                    <svg
+                      data-v-c3ad5561=""
+                      xmlns="http://www.w3.org/2000/svg"
+                      xmlns:xlink="http://www.w3.org/1999/xlink"
+                      aria-hidden="true"
+                      role="img"
+                      class=""
+                      width="1em"
+                      height="1em"
+                      viewBox="0 0 15 15"
+                    >
+                      <path
+                        fill="currentColor"
+                        fill-rule="evenodd"
+                        d="M8.625 2.5a1.125 1.125 0 1 1-2.25 0a1.125 1.125 0 0 1 2.25 0m0 5a1.125 1.125 0 1 1-2.25 0a1.125 1.125 0 0 1 2.25 0M7.5 13.625a1.125 1.125 0 1 0 0-2.25a1.125 1.125 0 0 0 0 2.25"
+                        clip-rule="evenodd"
+                      ></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>`);
+          $(`#images-column-${currentColumn}`).append(newDiv);
+          currentColumn = (currentColumn % columnCount) + 1;
+        });
+      });
+      $(document).on("click", ".image-check", function () {
+        selectImage(this);
+      });
+      loadingMyCreation = false;
+    });
+  };
+
   const fetchCreateImagesInfiniteScroll = function () {
     const email = $.cookie("user_email");
     fetchImageFromCreate(email).then((images) => {
@@ -606,7 +771,7 @@ const FunctionModule = (function () {
         showWarning("No more images to show");
         return;
       }
-      console.table(images);
+      // console.table(images);
       images.forEach((image) => {
         getMetaImage(image.image_transferred_url, function (width, height) {
           const newDiv = $("<div></div>");
@@ -635,6 +800,39 @@ const FunctionModule = (function () {
     });
   };
 
+  const toggleSelectImages = function (element) {
+    const text = $(element).children("div").first().text();
+    const modalSelectedImages = $("#modal-selected-images");
+    const listImages = $(".normal-mode-overlay");
+    const listImagesSelect = $(".select-mode-overlay");
+    if (text === "Select Images") {
+      $(element).addClass("border-[#A855F7]");
+      $(element).removeClass("border-[#C0C0C3]");
+      $(element).children("div").first().text("Stop Selecting");
+      modalSelectedImages.addClass("flex");
+      modalSelectedImages.removeClass("hidden");
+      listImages.each(function () {
+        $(this).hide();
+      });
+      listImagesSelect.each(function () {
+        $(this).show();
+      });
+    } else if (text === "Stop Selecting") {
+      $(element).removeClass("border-[#A855F7]");
+      $(element).addClass("border-[#C0C0C3]");
+      $(element).children("div").first().text("Select Images");
+      modalSelectedImages.removeClass("flex");
+      modalSelectedImages.addClass("hidden");
+      listImages.each(function () {
+        $(this).show();
+      });
+      listImagesSelect.each(function () {
+        $(this).hide();
+      });
+      unselectAllImages();
+    }
+  };
+
   const checkUser = async function () {
     if (!$.cookie("user_email")) {
       return false;
@@ -646,6 +844,104 @@ const FunctionModule = (function () {
       console.log("Error checking user exist:", error);
       return false;
     }
+  };
+
+  const selectImage = function (element) {
+    const firstDivChildren = $(element).children("div:first").children("div");
+    const firstDivImages = $(element).children("div:first").children("img");
+    const amountSelectedImages = $("#amount-selected-images");
+    if (
+      $("#btn-select-images").children("div").first().text() === "Select Images"
+    )
+      return;
+    if (firstDivImages.hasClass("hidden")) {
+      $(element).children("img").css({
+        transform: "scale(0.78)",
+        "border-radius": "0.5rem",
+      });
+      $(element).css({
+        "border-width": "1px",
+        "border-color": "#A855F7",
+        "background-color": "#1B1131",
+      });
+      amountSelectedImages.text(parseInt(amountSelectedImages.text(), 10) + 1);
+      $("#btn-download-list-imgs")
+        .removeAttr("disabled")
+        .css({ "background-color": "#504DE3" });
+      $("#btn-delete-list-imgs")
+        .removeAttr("disabled")
+        .css({ "background-color": "#3F3D49" });
+    } else {
+      $(element).children("img").css({
+        transform: "scale(1)",
+        "border-radius": "0.75rem",
+      });
+      $(element).css({
+        "border-width": "0px",
+        "border-color": "#1B1131",
+        "background-color": "#1B1131",
+      });
+      amountSelectedImages.text(parseInt(amountSelectedImages.text(), 10) - 1);
+      if (amountSelectedImages.text() === "0") {
+        $("#btn-download-list-imgs")
+          .attr("disabled", "disabled")
+          .css({ "background-color": "#2C2950" });
+        $("#btn-delete-list-imgs")
+          .attr("disabled", "disabled")
+          .css({ "background-color": "#2D2A37" });
+      }
+    }
+    firstDivChildren.toggleClass("hidden");
+    firstDivImages.toggleClass("hidden");
+  };
+
+  const unselectAllImages = function () {
+    const amountSelectedImages = $("#amount-selected-images");
+    const listImages = $(".image-check");
+    listImages.each(function () {
+      $(this).children("img").css({
+        transform: "scale(1)",
+        "border-radius": "0.75rem",
+      });
+      $(this).css({
+        "border-width": "0px",
+        "border-color": "#1B1131",
+        "background-color": "#1B1131",
+      });
+      $(this).children("div:first").children("div").removeClass("hidden");
+      $(this).children("div:first").children("img").addClass("hidden");
+    });
+    amountSelectedImages.text("0");
+    $("#btn-download-list-imgs").attr("disabled", "disabled");
+    $("#btn-delete-list-imgs").attr("disabled", "disabled");
+    $("#btn-download-list-imgs").css({ "background-color": "#2C2950" });
+    $("#btn-delete-list-imgs").css({ "background-color": "#2D2A37" });
+  };
+
+  const downloadAndZipImages = function (imageUrls) {
+    const zip = new JSZip();
+    const imgFolder = zip.folder("images");
+    const promises = imageUrls.map((imageUrl, index) => {
+      return fetchImageURL(imageUrl).then((url) => {
+        return fetch(url).then((response) => {
+          if (response.ok) {
+            return response.blob().then((blob) => {
+              const fileName = imageUrl.split("?")[0].split("/").pop();
+              imgFolder.file(fileName, blob);
+            });
+          }
+        });
+      });
+    });
+
+    Promise.all(promises).then(() => {
+      zip.generateAsync({ type: "blob" }).then((content) => {
+        saveAs(content, "images.zip");
+        unselectAllImages();
+        $("#loading-overlay").removeClass("load");
+        showSuccess("Images downloaded successfully");
+      });
+    });
   };
 
   return {

@@ -31,7 +31,92 @@
           ></a>
         </div>
         {% if user_auth.is_auth %}
-        <div class="w-full flex justify-end items-center">
+        <div class="w-full flex justify-between items-center">
+          <div></div>
+          <div
+            class="hidden lg:flex text-sm items-center menu-wrapper h-[80px] max-h-[80px]"
+          >
+            <div
+              style="
+                position: fixed;
+                top: 1;
+                left: 1;
+                width: 1;
+                height: 0;
+                padding: 0;
+                margin: -1;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+                white-space: nowrap;
+                border-width: 0;
+                display: none;
+              "
+            ></div>
+            <a href="/" class="router-link-active"
+              ><span
+                class="h-20 max-h-20 px-4 text-base font-bold flex items-center text-black dark:text-gray-300"
+                >Explore</span
+              ></a
+            ><a href="/creation"
+              ><span
+                class="h-20 max-h-20 px-4 text-base font-bold flex items-center text-black dark:text-gray-300"
+                >My Creation</span
+              ></a
+            >
+          </div>
+          <div class="relative">
+            <button
+              class="flex items-center transition-all duration-300 text-base max-h-20 dark:text-gray-300 outline-none w-28 h-8 rounded-lg bg-gradient-to-r from-purple-500 to-sky-500 text-white justify-between"
+              type="button"
+              aria-expanded="false"
+            >
+              <div
+                class="flex items-center transition-all duration-300 text-base max-h-20 dark:text-gray-300 outline-none grow w-16 h-8 text-white justify-between"
+              >
+                <a
+                  href="/create/generate"
+                  class="h-full w-full flex items-center justify-center"
+                  >Create</a
+                >
+              </div>
+              <div class="h-full w-[1px] bg-white"></div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                aria-hidden="true"
+                role="img"
+                class="w-8"
+                width="1em"
+                height="1em"
+                viewBox="0 0 32 32"
+                data-v-c3ad5561=""
+              >
+                <path
+                  fill="currentColor"
+                  d="M16 22L6 12l1.4-1.4l8.6 8.6l8.6-8.6L26 12z"
+                ></path>
+              </svg>
+            </button>
+          </div>
+          <div
+            style="
+              position: fixed;
+              top: 1;
+              left: 1;
+              width: 1;
+              height: 0;
+              padding: 0;
+              margin: -1;
+              overflow: hidden;
+              clip: rect(0, 0, 0, 0);
+              white-space: nowrap;
+              border-width: 0;
+              display: none;
+            "
+          ></div>
+          <!--]--><!--]-->
+        </div>
+        <!-- <div class="w-full flex justify-end items-center">
           <div class="relative">
             <button
               class="flex items-center transition-all duration-300 text-base max-h-20 dark:text-gray-300 outline-none w-28 h-8 rounded-lg bg-gradient-to-r from-purple-500 to-sky-500 text-white justify-between"
@@ -65,7 +150,7 @@
               display: none;
             "
           ></div>
-        </div>
+        </div> -->
         <div class="relative gap-2 md:gap-6 flex items-center">
           <div class="user-avatar cursor-pointer min-w-[40px]">
             <img

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      src="https://kit.fontawesome.com/2f0d215eb6.js"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="stylesheet" href="../static/css/main.css" />
+    <link rel="stylesheet" href="../static/css/style.css" />
+    <title>Pengala</title>
+    <link rel="icon" href="../static/images/icon.png" type="image/x-icon" />
+  </head>
+  <body
+    class="antialiased duration-300 transition-colors text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-950 hidden-scroll"
+  >
+    <div id="loading-overlay" class="overlay">
+      <div class="loader"></div>
+    </div>
+    <div>
+      <header
+        class="flex fixed backdrop-filter backdrop-blur-md top-0 z-40 w-full flex-none transition-colors duration-300 lg:z-50 bg-opacity-0 dark:bg-[#110F1A] h-[80px] max-h-[80px]"
+      >
+        <div
+          class="flex-1 flex items-center justify-between mx-auto px-4 gap-2 md:gap-6 w-full"
+        >
+          <div class="flex">
+            <a
+              aria-current="page"
+              href="/"
+              class="router-link-active router-link-exact-active"
+              ><div class="flex max-w-[136px] max-h-10">
+                <img src="../static/images/logo.png" /></div
+            ></a>
+          </div>
+          {% if user_auth.is_auth %}
+          <div class="w-full flex justify-between items-center">
+            <div></div>
+            <div
+              class="hidden lg:flex text-sm items-center menu-wrapper h-[80px] max-h-[80px]"
+            >
+              <div
+                style="
+                  position: fixed;
+                  top: 1;
+                  left: 1;
+                  width: 1;
+                  height: 0;
+                  padding: 0;
+                  margin: -1;
+                  overflow: hidden;
+                  clip: rect(0, 0, 0, 0);
+                  white-space: nowrap;
+                  border-width: 0;
+                  display: none;
+                "
+              ></div>
+              <a href="/"
+                ><span
+                  class="h-20 max-h-20 px-4 text-base font-bold flex items-center text-black dark:text-gray-300"
+                  >Explore</span
+                ></a
+              ><a href="/creation" class="router-link-active"
+                ><span
+                  class="h-20 max-h-20 px-4 text-base font-bold flex items-center text-black dark:text-gray-300"
+                  >My Creation</span
+                ></a
+              >
+            </div>
+            <div class="relative">
+              <button
+                class="flex items-center transition-all duration-300 text-base max-h-20 dark:text-gray-300 outline-none w-28 h-8 rounded-lg bg-gradient-to-r from-purple-500 to-sky-500 text-white justify-between"
+                type="button"
+                aria-expanded="false"
+              >
+                <div
+                  class="flex items-center transition-all duration-300 text-base max-h-20 dark:text-gray-300 outline-none grow w-16 h-8 text-white justify-between"
+                >
+                  <a
+                    href="/create/generate"
+                    class="h-full w-full flex items-center justify-center"
+                    >Create</a
+                  >
+                </div>
+                <div class="h-full w-[1px] bg-white"></div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                  aria-hidden="true"
+                  role="img"
+                  class="w-8"
+                  width="1em"
+                  height="1em"
+                  viewBox="0 0 32 32"
+                  data-v-c3ad5561=""
+                >
+                  <path
+                    fill="currentColor"
+                    d="M16 22L6 12l1.4-1.4l8.6 8.6l8.6-8.6L26 12z"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+            <div
+              style="
+                position: fixed;
+                top: 1;
+                left: 1;
+                width: 1;
+                height: 0;
+                padding: 0;
+                margin: -1;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+                white-space: nowrap;
+                border-width: 0;
+                display: none;
+              "
+            ></div>
+          </div>
+          <div class="relative gap-2 md:gap-6 flex items-center">
+            <div class="user-avatar cursor-pointer min-w-[40px]">
+              <img
+                class="w-10 h-10 inline-block rounded-full"
+                src="{{user_auth.user_avatar}}"
+                alt="{{user_auth.user_name}}"
+              />
+            </div>
+            <div
+              class="user-info-container bg-white absolute top-[3.25rem] right-1 hidden min-w-60 p-2 flex-col items-start gap-1 rounded-lg shadow-md bg-opacity-95 text-black"
+            >
+              <div
+                class="flex w-full px-3 py-2 items-center gap-2 rounded-lg cursor-pointer relative after:content-[''] after:absolute after:border-b after:w-[100%] after:border-[#E3E3E3] after:-bottom-1 after:right-0"
+              >
+                <div class="cursor-pointer w-6 h-6">
+                  <img
+                    class="inline-block rounded-full w-6 h-6"
+                    src="{{user_auth.user_avatar}}"
+                    alt="{{user_auth.user_name}}"
+                  />
+                </div>
+                <p>{{user_auth.user_name}}</p>
+              </div>
+              <button
+                class="btn-logout flex px-3 w-full py-2 items-center gap-2 rounded-lg cursor-pointer relative"
+              >
+                <img src="../static/images/logout_icon.svg" alt="logout" /><span
+                  >Logout</span
+                >
+              </button>
+            </div>
+          </div>
+          {% else %}
+          <button
+            class="login-btn flex space-x-2 h-8 max-h-8 w-20 min-w-[80px] items-center justify-end rounded-full py-2 px-4 bg-blue-600 hover:text-opacity-75 dark:hover:text-white font-[Nunito] text-sm font-semibold text-white"
+          >
+            Sign in
+          </button>
+
+          {% endif %}
+        </div>
+      </header>
+
+      <div class="pt-20">
+        <div
+          class="nuxt-loading-indicator"
+          style="
+            position: fixed;
+            top: 0px;
+            right: 0px;
+            left: 0px;
+            pointer-events: none;
+            width: auto;
+            height: 3px;
+            opacity: 0;
+            background: repeating-linear-gradient(
+              to right,
+              rgb(0, 220, 130) 0%,
+              rgb(52, 205, 254) 50%,
+              rgb(0, 71, 225) 100%
+            );
+            transform: scaleX(0);
+            transform-origin: left center;
+            transition: transform 0.1s ease 0s, height 0.4s ease 0s,
+              opacity 0.4s ease 0s;
+            z-index: 999999;
+          "
+        ></div>
+        <div class="p-4 w-full">
+          <div
+            class="w-full h-9 mb-4 mt-1 flex justify-end sticky top-20 z-[22]"
+          >
+            <div
+              class="h-full w-80 gap-4 flex mr-2 justify-end max-sm:mr-0 max-sm:gap-1"
+            >
+              <div
+                id="btn-select-images"
+                class="h-full w-[148px] bg-[#292A33] rounded-lg flex justify-between items-center px-3 cursor-pointer border hover:border-white max-sm:w-[140px] border-[#C0C0C3]"
+              >
+                <img
+                  src="https://staging.pixor.ai/_nuxt/mouse-circle.432d1e43.svg"
+                  alt=""
+                />
+                <div class="text-sm">Select Images</div>
+              </div>
+            </div>
+          </div>
+          <div class="infinite-scroll-wrapper hidden-scroll creation">
+            <div class="images-wrapper">
+              <div id="images-column-1" class="images-column"></div>
+              <div id="images-column-2" class="images-column"></div>
+              <div id="images-column-3" class="images-column"></div>
+              <div id="images-column-4" class="images-column"></div>
+              <div id="images-column-5" class="images-column"></div>
+            </div>
+          </div>
+          <div
+            id="modal-selected-images"
+            class="fixed w-[502px] h-14 bg-[#23212C] bottom-14 left-0 right-0 m-auto rounded-lg hidden justify-between items-center gap-4 max-sm:w-[330px]"
+          >
+            <div
+              class="w-1/2 h-1/2 flex justify-start items-center px-4 gap-4 border-r-2 border-[#55535D] max-sm:gap-2 max-sm:px-2"
+            >
+              <img
+                id="btn-close-modal-selected-images"
+                src="https://staging.pixor.ai/_nuxt/icon-close.c25e77ae.svg"
+                alt=""
+                width="20"
+                height="20"
+                class="cursor-pointer"
+              />
+              <div class="text-base font-bold">
+                Selected (<span id="amount-selected-images">0</span>)
+              </div>
+            </div>
+            <div
+              class="w-1/2 h-1/2 flex justify-between items-center px-4 gap-2 z-[100]"
+            >
+              <button
+                id="btn-delete-list-imgs"
+                class="rounded-md w-16 text-xs h-full bg-[#2D2A37]"
+                disabled
+              >
+                Delete</button
+              ><button
+                id="btn-download-list-imgs"
+                type="button"
+                class="rounded-md w-[96px] text-xs h-full flex justify-center items-center max-sm:w-16 bg-[#2C2950]"
+                disabled
+              >
+                <span class="max-sm:hidden">Download</span
+                ><svg
+                  data-v-c3ad5561=""
+                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                  aria-hidden="true"
+                  role="img"
+                  class="sm:hidden w-4 h-4"
+                  width="1em"
+                  height="1em"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    fill="currentColor"
+                    d="M12 15.575q-.2 0-.375-.062T11.3 15.3l-3.6-3.6q-.3-.3-.288-.7t.288-.7q.3-.3.713-.312t.712.287L11 12.15V5q0-.425.288-.712T12 4t.713.288T13 5v7.15l1.875-1.875q.3-.3.713-.288t.712.313q.275.3.288.7t-.288.7l-3.6 3.6q-.15.15-.325.213t-.375.062M6 20q-.825 0-1.412-.587T4 18v-2q0-.425.288-.712T5 15t.713.288T6 16v2h12v-2q0-.425.288-.712T19 15t.713.288T20 16v2q0 .825-.587 1.413T18 20z"
+                  ></path>
+                </svg>
+              </button>
+              <div class="relative z-[100]"><!----></div>
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                class="cursor-pointer"
+              >
+                <ellipse
+                  cx="10.0007"
+                  cy="4.16667"
+                  rx="1.66667"
+                  ry="1.66667"
+                  fill="#AEAEAE"
+                ></ellipse>
+                <circle
+                  cx="10.0007"
+                  cy="9.99992"
+                  r="1.66667"
+                  fill="#AEAEAE"
+                ></circle>
+                <ellipse
+                  cx="10.0007"
+                  cy="15.8334"
+                  rx="1.66667"
+                  ry="1.66667"
+                  fill="#AEAEAE"
+                ></ellipse>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module" src="../static/js/firebase.js"></script>
+    <script src="../static/js/jquery.js"></script>
+    <script src="../static/js/jquery.cookie.js"></script>
+    <script type="module" src="../static/js/script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  </body>
+</html>
