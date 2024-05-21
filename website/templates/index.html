@@ -30,7 +30,6 @@
               <img src="../static/images/logo.png" /></div
           ></a>
         </div>
-        {% if user_auth.is_auth %}
         <div class="w-full flex justify-between items-center">
           <div></div>
           <div
@@ -64,6 +63,7 @@
               ></a
             >
           </div>
+          {% if user_auth.is_auth %}
           <div class="relative">
             <button
               class="flex items-center transition-all duration-300 text-base max-h-20 dark:text-gray-300 outline-none w-28 h-8 rounded-lg bg-gradient-to-r from-purple-500 to-sky-500 text-white justify-between"
