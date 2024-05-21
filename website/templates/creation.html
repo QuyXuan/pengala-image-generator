@@ -34,7 +34,6 @@
                 <img src="../static/images/logo.png" /></div
             ></a>
           </div>
-          {% if user_auth.is_auth %}
           <div class="w-full flex justify-between items-center">
             <div></div>
             <div
@@ -119,6 +118,7 @@
               "
             ></div>
           </div>
+          {% if user_auth.is_auth %}
           <div class="relative gap-2 md:gap-6 flex items-center">
             <div class="user-avatar cursor-pointer min-w-[40px]">
               <img
@@ -188,6 +188,7 @@
           "
         ></div>
         <div class="p-4 w-full">
+          {% if user_auth.is_auth %}
           <div
             class="w-full h-9 mb-4 mt-1 flex justify-end sticky top-20 z-[22]"
           >
@@ -267,7 +268,7 @@
                   ></path>
                 </svg>
               </button>
-              <div class="relative z-[100]"><!----></div>
+              <div class="relative z-[100]"></div>
               <svg
                 width="20"
                 height="20"
@@ -299,9 +300,87 @@
               </svg>
             </div>
           </div>
+          {% else %}
+          <div class="flex justify-center items-center flex-col">
+            <img
+              src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAAEpUlEQVR4nO2aS2wbVRSGDwtYdseCqit2JanSyOM45EGlLNKAUgosrLBtqGjFI0H2ggVbpIpVu6poTBtoqrJCQCXeiNigohIq2yIl1MGpaKgTJx2bjFNsx/YcdOyxmUzs8dgz1x7D/aV/Y2Ue/zfnHI/vDQAXFxcXFxcXFxcXFxdXbb0U2ep/LSp9Nh3dFj1RSfaspNCop6IpdIUS1jkoyq5QItYXEueEkNgNrHVq+a9X3ohKuUZCqz0ZkawFoHJfUMy4QuIEs/AnlreeLIe/upHGtWwBC1hSXkb8OpmtC2BsMckMQBkCs0p49Xfpcwrx4UYGqylTkHXDu5e2mIavQAiJc0wATEelJAVZ3yk/939VkBG/qVIB09FS2bN+8rvnQmLN+vSID9HA866kKmUvI+LJZQmHwy0MZ3Aw0v1aD2AlhQQAVQCsDj8UTuDleBo3dwpFvx9PFz9r9DwXnH7ZJwRiM47AnE/4rpsZAJfFT4/CazUbTzd8nhlnAH1CxRmfEJiwDECekiNiTrYewP3c3vkS3ymYBaBAMFMJWAJA/jaZLYanoWc1ACp7rWjoGjnW+eOf2PvlIvZ8ulANAFI7WALAo3IrWuCSgRZw+KPY88lCxTUArNkewFA4gR80OASdN2K7wtcEIPhlhGa/HbA1AJpx71e3DAEgtxzAYDiJb93L4LtiAd9czeBAE19p9dxz7aZ9AXjupnE2KVf8+h9/Ww9AE942AI4vSXhJFZ58MSHjsSXpvw9gMJzEcxv5XeHLPruZw4FQ/TfI/k4G4NWUvtZ6rXD01xROrubw5Goen4s86DwAx6uU/qzBVhhZlPDlewU8pfL47e3OATCoU/r1WmEgnMQTd3O7wpMJyMgtqTMAeOuUvl4rvHgnuyd82QSGANkKwJRmgfP53+qXfq1WeDbyoGb4sgmQrQBMqhY4Gyl9rc9t5vF0nfB686BtAMZUy1yNlr7Wb28aA1BtHrQFgFu1wNlM6WtNx3vXjUHQzoOWAZiqscB5Zn3HVPiyzydkPB0zBsG9kmk9AFeNr6Fme99MK9CLEl277+ZGCwEEi9tQewC4b6fw/P2CJQCoFTxr+uHpDfFYZLsYvtpP4cMfswAAAH1BMW7k3dwKC9dXsfeLX7Dn2s9Vn7Ce+68uVA1vGoArlLjSivCO+eWGQ6v9wjs32ADoDycOuYJilvWTNxO+96Of8Mz4D2wAkGj3tbQLywZAsexNhPdOXq8Z3hIAJNp9pQ1I2pe3GkCjPU8Dj3qeyl7vyVsKQC06Ia221ruwHWxuVVhHPsEf7wgApvYFdOQTAlfaHc6QHf7LwEIXHfOHZgR/tu0B9Z254Py+C1jJJwQmlF1YW4Z/zznvZha+LNp9Le3HB2LtDq0M5hiVPdMnz8XFxcXFVdQjALAPAB4FgAMA8DgAHASAw7SWAgBDADAMAEcAYETxKAAcBYAxABhXPKZ8Nqr6uyPKscPKueicTyjXOKBcc59yDy3RwwDwGADQf10NKDc7bhMTvEHl3vazgHIQAJ62QVCjfkaB8b8G0AWMWqDLhi0wqtxTt3KPdK+2GoJPNTEE6Rg6ls5RHoJ0bkuH4D+khq+5+6gxJAAAAABJRU5ErkJggg=="
+              alt="No Image"
+            /><span>Login to see your creation.</span>
+          </div>
+          {% endif %}
         </div>
       </div>
     </div>
+    {%if not user_auth.is_auth %}
+    <div
+      id="login-dialog"
+      class="fixed inset-0 flex justify-center items-center z-[60] bg-black bg-opacity-80"
+    >
+      <div
+        class="relative rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.2)] lg:max-w-[90%] lg:w-auto w-full h-full lg:h-fit"
+      >
+        <div
+          id="close-login-dialog"
+          class="rounded-full bg-gray-700 bg-opacity-50 flex items-center justify-center cursor-pointer absolute top-0 lg:right-[-40px] w-8 h-8 right-0 z-50 max-lg:hidden"
+        >
+          <img src="../static/images/close_icon.svg" alt="" />
+        </div>
+        <div
+          class="absolute lg:hidden bg-slate-800 opacity-90 z-[100] w-full flex h-10 shadow-xl"
+        >
+          <div class="flex items-center justify-center cursor-pointer ml-3">
+            <img src="../static/images/back_icon.svg" alt="" class="h-7 w-7" />
+          </div>
+        </div>
+
+        <div class="h-full max-lg:h-[calc(100%-40px)] w-full max-lg:mt-10">
+          <div
+            class="h-[540px] flex items-stretch bg-white shadow-lg rounded-[0.4rem] justify-between text-center text-base leading-6 text-gray-700 max-lg:w-full max-lg:rounded-none max-lg:h-full"
+          >
+            <div
+              class="p-6 w-[400px] text-left box-border max-h-600 flex justify-center items-center rounded-[0.4rem] lg:rounded-r-none max-lg:w-full max-lg:h-full max-lg:rounded-none"
+            >
+              <div
+                class="h-full px-4 rounded-lg text-xs w-full bg-white/80 overflow-y-scroll flex flex-col justify-start hidden-scroll"
+              >
+                <p class="text-2xl text-gray-900 leading-32 mb-10">
+                  Welcome back to Pengala! Please sign in 🎉
+                </p>
+                <div class="btn-login-google relative">
+                  <div
+                    class="style_btn false border-none outline-none bg-gray-200 text-[13px] rounded cursor-pointer w-full h-10 leading-10 text-center my-2 mx-0 font-normal relative"
+                  >
+                    <div
+                      class="absolute h-6 left-3 top-[4px] max-[450px]:left-0.5"
+                    >
+                      <img
+                        src="../static/images/google_icon.svg"
+                        alt=""
+                        heigh="30"
+                        width="30"
+                      />
+                    </div>
+                    <div class="text-center">
+                      <button>Sign in with Google</button>
+                    </div>
+                  </div>
+                  <span class="google_login_btn_container"></span>
+                </div>
+              </div>
+            </div>
+            <div
+              class="rounded-l-none rounded-r-[0.4rem] w-[480px] p-2 items-center justify-center box-border relative loginRightPadding hidden lg:flex"
+            >
+              <img
+                src="../static/images/login-bg.png"
+                class="w-full h-full object-contain"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="module" src="../static/js/firebase.js"></script>
     <script src="../static/js/jquery.js"></script>

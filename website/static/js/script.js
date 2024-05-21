@@ -644,14 +644,13 @@ const FunctionModule = (function () {
       takeMyCreation,
       lastCreateTimeMyCreation
     ).then((images) => {
-      debugger;
       if (images.length === 0) {
         showWarning("No more images to show");
         return;
       }
-      lastCreateTimeMyCreation = images[images.length - 1].val().create_time;
+      lastCreateTimeMyCreation = images[images.length - 1].create_time;
       images.forEach((image) => {
-        const { image_transferred_url, prompt } = image.val();
+        const { image_transferred_url, prompt } = image;
         getMetaImage(image_transferred_url, function (width, height) {
           const newDiv = $("<div></div>");
           newDiv.addClass("relative group");

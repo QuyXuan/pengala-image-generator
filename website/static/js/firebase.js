@@ -97,14 +97,14 @@ export const fetchImageFromMyCreation = async (
         imagesQuery = query(
           imagesRef,
           orderByChild("create_time"),
-          startAfter(lastCreateTime),
-          limitToFirst(take)
+          endBefore(lastCreateTime),
+          limitToLast(take)
         );
       } else {
         imagesQuery = query(
           imagesRef,
           orderByChild("create_time"),
-          limitToFirst(take)
+          limitToLast(take)
         );
       }
 
@@ -112,10 +112,12 @@ export const fetchImageFromMyCreation = async (
       let imagesList = [];
 
       if (imagesSnapshot.exists()) {
-        imagesSnapshot.forEach((child) => {
-          imagesList.push(child);
+        imagesSnapshot.forEach((childSnapshot) => {
+          imagesList.push({ key: childSnapshot.key, ...childSnapshot.val() });
         });
+        imagesList = imagesList.reverse();
       }
+
       return imagesList;
     } else {
       return [];
@@ -132,13 +134,23 @@ export const fetchImageFromCreate = async (email) => {
   try {
     const userQuery = query(userRef, orderByChild("email"), equalTo(email));
     const snapshot = await get(userQuery);
-    let images = [];
+
     if (snapshot.exists()) {
-      snapshot.forEach((childSnapshot) => {
-        const user = childSnapshot.val();
-        images = user.images;
-      });
-      return images.reverse();
+      const userId = Object.keys(snapshot.val())[0];
+      const imagesRef = dbRef(database, `users/${userId}/images`);
+      const imagesQuery = query(
+        imagesRef,
+        orderByChild("create_time"),
+        limitToFirst(200)
+      );
+      const imagesSnapshot = await get(imagesQuery);
+      let imagesArray = [];
+      if (imagesSnapshot.exists()) {
+        imagesSnapshot.forEach((childSnapshot) => {
+          imagesArray.push(childSnapshot.val());
+        });
+      }
+      return imagesArray.sort(() => 0.5 - Math.random()).slice(0, 40);
     }
     return [];
   } catch (error) {
