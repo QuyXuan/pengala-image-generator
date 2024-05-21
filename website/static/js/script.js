@@ -4,6 +4,7 @@ import {
   fetchImageFromCreate,
   fetchImageFromMyCreation,
   checkUserExist,
+  deleteListImages,
 } from "./firebase.js";
 
 $(document).ready(function () {
@@ -20,6 +21,7 @@ const FunctionModule = (function () {
   let lastCreateTimeMyCreation = null;
   let columnCount = 5;
   let currentColumn = 1;
+  const userEmail = $.cookie("user_email");
 
   const toast = Swal.mixin({
     toast: true,
@@ -37,7 +39,7 @@ const FunctionModule = (function () {
     try {
       if (window.location.pathname === "/") {
         fetchExploreImagesInfiniteScroll();
-      } else if (window.location.pathname === "/create") {
+      } else if (window.location.pathname === "/create/generate") {
         checkUser().then((exist) => {
           if (exist) {
             $("#text-prompt").focus();
@@ -175,30 +177,16 @@ const FunctionModule = (function () {
         toggleSelectImages(this);
       });
 
-      // $(".image-check").on("click", function () {
-      //   selectImage(this);
-      // });
-
       $("#btn-close-modal-selected-images").on("click", function () {
         toggleSelectImages($("#btn-select-images"));
       });
 
       $("#btn-download-list-imgs").on("click", function () {
-        $("#loading-overlay").addClass("load");
-        const listImages = $(".image-check");
-        const imageUrls = [];
-        listImages.each(function () {
-          if (
-            !$(this).children("div:first").children("img").hasClass("hidden")
-          ) {
-            imageUrls.push($(this).children("img").attr("src"));
-          }
-        });
-        if (imageUrls.length === 0) {
-          showWarning("No images selected");
-          return;
-        }
-        downloadAndZipImages(imageUrls);
+        downloadListImages();
+      });
+
+      $("#btn-delete-list-imgs").on("click", function () {
+        deleteImages();
       });
     } catch (e) {
       console.log("InitEvents: " + e.message);
@@ -652,23 +640,26 @@ const FunctionModule = (function () {
   const fetchMyCreationImagesInfiniteScroll = function () {
     loadingMyCreation = true;
     fetchImageFromMyCreation(
-      "trinhhung2804@gmail.com",
+      userEmail,
       takeMyCreation,
       lastCreateTimeMyCreation
     ).then((images) => {
+      debugger;
       if (images.length === 0) {
         showWarning("No more images to show");
         return;
       }
-      lastCreateTimeMyCreation = images[images.length - 1].create_time;
+      lastCreateTimeMyCreation = images[images.length - 1].val().create_time;
       images.forEach((image) => {
-        getMetaImage(image.image_transferred_url, function (width, height) {
+        const { image_transferred_url, prompt } = image.val();
+        getMetaImage(image_transferred_url, function (width, height) {
           const newDiv = $("<div></div>");
           newDiv.addClass("relative group");
+          newDiv.attr("id", image.key);
           newDiv.html(`
             <div class="image-check overflow-hidden rounded-md">
               <img
-                src="${image.image_transferred_url}"
+                src="${image_transferred_url}"
                 class="hover:cursor-zoom-in w-full h-full md:group-hover:brightness-50 transition-opacity duration-500 transition-hover flex"
                 decoding="async"
                 style="aspect-ratio: ${width} / ${height};"
@@ -682,42 +673,13 @@ const FunctionModule = (function () {
                 ></div>
                 <img
                   class="hidden"
-                  src="https://staging.pixor.ai/_nuxt/rounded-checkbox.e55bfe2c.svg"
+                  src="../static/images/rounded-checkbox.svg"
                   alt=""
                 />
               </div>
               <div
                 class="normal-mode-overlay visible group-hover:visible delay-150 md:invisible"
               >
-                <div
-                  class="absolute px-1 md:px-2 flex w-full right-0 top-1 md:top-2 justify-end"
-                >
-                  <div
-                    class="right-2 top-0 max-md:gap-0 bg-gray-950 bg-opacity-30 flex w-9 justify-center items-center gap-1 rounded-md cursor-pointer"
-                  >
-                    <div
-                      class="text-sm text-gray-50 font-semibold leading-4"
-                    >
-                      0
-                    </div>
-                    <div
-                      class="z-20 flex items-center justify-center max-md:p-1"
-                    >
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 20 20"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M10.0013 18.0417C9.74297 18.0417 9.49297 18.0084 9.28464 17.9334C6.1013 16.8417 1.04297 12.9667 1.04297 7.24171C1.04297 4.32504 3.4013 1.95837 6.3013 1.95837C7.70964 1.95837 9.0263 2.50837 10.0013 3.49171C10.9763 2.50837 12.293 1.95837 13.7013 1.95837C16.6013 1.95837 18.9596 4.33337 18.9596 7.24171C18.9596 12.975 13.9013 16.8417 10.718 17.9334C10.5096 18.0084 10.2596 18.0417 10.0013 18.0417ZM6.3013 3.20837C4.09297 3.20837 2.29297 5.01671 2.29297 7.24171C2.29297 12.9334 7.76797 16.1 9.69297 16.7584C9.84297 16.8084 10.168 16.8084 10.318 16.7584C12.2346 16.1 17.718 12.9417 17.718 7.24171C17.718 5.01671 15.918 3.20837 13.7096 3.20837C12.443 3.20837 11.268 3.80004 10.5096 4.82504C10.2763 5.14171 9.74297 5.14171 9.50964 4.82504C8.73464 3.79171 7.56797 3.20837 6.3013 3.20837Z"
-                          fill="white"
-                        ></path>
-                      </svg>
-                    </div>
-                  </div>
-                </div>
                 <div
                   class="flex flex-row place-content-between w-full absolute px-1 md:px-2 bottom-1 md:bottom-2 gap-1 md:justify-between justify-end"
                 >
@@ -726,30 +688,8 @@ const FunctionModule = (function () {
                   >
                     <div
                       class="whitespace-nowrap text-ellipsis overflow-hidden text-xs sm:text-sm 2xl:text-base text-white"
-                    ></div>
+                    >${prompt}</div>
                   </div>
-                  <button
-                    class="p-1 rounded-md bg-gray-950 bg-opacity-30 hover:bg-opacity-60 right-0 flex place-items-center"
-                  >
-                    <svg
-                      data-v-c3ad5561=""
-                      xmlns="http://www.w3.org/2000/svg"
-                      xmlns:xlink="http://www.w3.org/1999/xlink"
-                      aria-hidden="true"
-                      role="img"
-                      class=""
-                      width="1em"
-                      height="1em"
-                      viewBox="0 0 15 15"
-                    >
-                      <path
-                        fill="currentColor"
-                        fill-rule="evenodd"
-                        d="M8.625 2.5a1.125 1.125 0 1 1-2.25 0a1.125 1.125 0 0 1 2.25 0m0 5a1.125 1.125 0 1 1-2.25 0a1.125 1.125 0 0 1 2.25 0M7.5 13.625a1.125 1.125 0 1 0 0-2.25a1.125 1.125 0 0 0 0 2.25"
-                        clip-rule="evenodd"
-                      ></path>
-                    </svg>
-                  </button>
                 </div>
               </div>
             </div>`);
@@ -765,13 +705,12 @@ const FunctionModule = (function () {
   };
 
   const fetchCreateImagesInfiniteScroll = function () {
-    const email = $.cookie("user_email");
-    fetchImageFromCreate(email).then((images) => {
+    fetchImageFromCreate(userEmail).then((images) => {
       if (images.length === 0) {
         showWarning("No more images to show");
         return;
       }
-      // console.table(images);
+      console.table(images);
       images.forEach((image) => {
         getMetaImage(image.image_transferred_url, function (width, height) {
           const newDiv = $("<div></div>");
@@ -942,6 +881,45 @@ const FunctionModule = (function () {
         showSuccess("Images downloaded successfully");
       });
     });
+  };
+
+  const deleteImages = function () {
+    const listImages = $(".image-check");
+    const imageIds = [];
+    listImages.each(function () {
+      if (!$(this).children("div:first").children("img").hasClass("hidden")) {
+        imageIds.push($(this).parent().attr("id"));
+      }
+    });
+    if (imageIds.length === 0) {
+      showWarning("No images selected");
+      return;
+    }
+    updateImagesUI(imageIds);
+  };
+
+  const downloadListImages = function () {
+    $("#loading-overlay").addClass("load");
+    const listImages = $(".image-check");
+    const imageUrls = [];
+    listImages.each(function () {
+      if (!$(this).children("div:first").children("img").hasClass("hidden")) {
+        imageUrls.push($(this).children("img").attr("src"));
+      }
+    });
+    if (imageUrls.length === 0) {
+      showWarning("No images selected");
+      return;
+    }
+    downloadAndZipImages(imageUrls);
+  };
+
+  const updateImagesUI = function (imageIds) {
+    imageIds.forEach((imageId) => {
+      $(`#${imageId}`).remove();
+    });
+    unselectAllImages();
+    deleteListImages(userEmail, imageIds);
   };
 
   return {

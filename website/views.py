@@ -10,10 +10,7 @@ import base64
 import os
 import pathlib
 import requests
-from .firebase_utils import (
-    create_user,
-    add_image,
-)
+from .firebase_utils import create_user, add_image
 from werkzeug.utils import secure_filename
 from datetime import datetime
 from google.oauth2 import id_token

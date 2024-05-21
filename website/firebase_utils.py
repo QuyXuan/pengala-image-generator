@@ -58,9 +58,8 @@ def add_image(transferred_image_base64, raw_image_base64, prompt, user_auth):
 
     if users_snapshot:
         for user_id, user_data in users_snapshot.items():
-            images = user_data.get("images", [])
-            images.append(obj)
-            users_ref.child(user_id).update({"images": images})
+            new_image_ref = users_ref.child(user_id).child("images").push()
+            new_image_ref.set(obj)
 
     add_image_to_explore(obj)
 

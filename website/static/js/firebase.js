@@ -8,6 +8,7 @@ import {
   getDatabase,
   ref as dbRef,
   get,
+  remove,
   query,
   orderByChild,
   limitToLast,
@@ -84,18 +85,14 @@ export const fetchImageFromMyCreation = async (
   const usersRef = dbRef(database, "users");
 
   try {
-    // Lấy reference theo email
     const userQuery = query(usersRef, orderByChild("email"), equalTo(email));
     const usersSnapshot = await get(userQuery);
 
-    // Điều này sẽ giả sử bạn có một người dùng duy nhất với email này
-    // Nếu có nhiều người dùng, bạn cần lọc thêm
     if (usersSnapshot.exists()) {
       const userId = Object.keys(usersSnapshot.val())[0];
       const imagesRef = dbRef(database, `users/${userId}/images`);
       let imagesQuery;
 
-      // Nếu lastCreateTime không phải null, chúng ta sẽ bắt đầu sau hình ảnh cuối cùng đã lấy
       if (lastCreateTime) {
         imagesQuery = query(
           imagesRef,
@@ -104,7 +101,6 @@ export const fetchImageFromMyCreation = async (
           limitToFirst(take)
         );
       } else {
-        // Nếu lastCreateTime là null, chúng ta sẽ lấy take số lượng hình đầu tiên
         imagesQuery = query(
           imagesRef,
           orderByChild("create_time"),
@@ -117,13 +113,12 @@ export const fetchImageFromMyCreation = async (
 
       if (imagesSnapshot.exists()) {
         imagesSnapshot.forEach((child) => {
-          imagesList.push(child.val());
+          imagesList.push(child);
         });
       }
-      // console.table(imagesList);
-      return imagesList; // Danh sách hình ảnh
+      return imagesList;
     } else {
-      return []; // Nếu không có người dùng, trả về mảng rỗng
+      return [];
     }
   } catch (error) {
     console.error("Error fetching images:", error);
@@ -161,6 +156,53 @@ export const checkUserExist = async (email) => {
     return snapshot.exists();
   } catch (error) {
     console.error("Error fetching user:", error);
+    throw error;
+  }
+};
+
+export const deleteListImages = async (email, imageIds) => {
+  const userRef = dbRef(database, "users");
+  const exploreRef = dbRef(database, "explore");
+
+  try {
+    const userQuery = query(userRef, orderByChild("email"), equalTo(email));
+    const userSnapshot = await get(userQuery);
+    let userId = null;
+    const exploreQuery = query(
+      exploreRef,
+      orderByChild("image_transferred_url"),
+      equalTo(image_transferred_url)
+    );
+    const exploreSnapshot = await get(exploreQuery);
+    const urlToExploreKeyMap = {};
+
+    if (exploreSnapshot.exists()) {
+      exploreSnapshot.forEach((childSnapshot) => {
+        urlToExploreKeyMap[childSnapshot.val().image_transferred_url] =
+          childSnapshot.key;
+      });
+    }
+    if (userSnapshot.exists()) {
+      userSnapshot.forEach((childSnapshot) => {
+        userId = childSnapshot.key;
+      });
+
+      for (let imageId of imageIds) {
+        const imagesRef = dbRef(database, `users/${userId}/images/${imageId}`);
+        const imageSnapshot = await get(imagesRef);
+
+        if (imageSnapshot.exists()) {
+          const { image_transferred_url } = imageSnapshot.val();
+          const exploreKey = urlToExploreKeyMap[image_transferred_url];
+          if (exploreKey) {
+            await remove(dbRef(database, `explore/${exploreKey}`));
+          }
+          await remove(imagesRef);
+        }
+      }
+    }
+  } catch (error) {
+    console.error("Error deleting images:", error);
     throw error;
   }
 };
