@@ -13,8 +13,8 @@ $(document).ready(function () {
 });
 
 const FunctionModule = (function () {
-  let takeExplore = 10;
-  let takeMyCreation = 10;
+  let takeExplore = 15;
+  let takeMyCreation = 15;
   let loadingExplore = false;
   let loadingMyCreation = false;
   let lastCreateTimeExplore = null;
@@ -22,6 +22,8 @@ const FunctionModule = (function () {
   let columnCount = 5;
   let currentColumn = 1;
   const userEmail = $.cookie("user_email");
+  let imagesCreateMap = new Map();
+  let currentImageIndex;
 
   const toast = Swal.mixin({
     toast: true,
@@ -410,11 +412,9 @@ const FunctionModule = (function () {
   };
 
   const showImage = function (element) {
-    const imageUrl = $(element)
-      .children("div")
-      .children("div")
-      .children("img")
-      .attr("src");
+    const idx = parseInt($(element).attr("data-index"));
+    currentImageIndex = idx;
+    const imageUrl = imagesCreateMap.get(idx);
     const swalWithBootstrapButtons = Swal.mixin({
       customClass: {
         confirmButton: "btn btn-success",
@@ -431,12 +431,59 @@ const FunctionModule = (function () {
         cancelButtonText: "Cancel",
         reverseButtons: true,
         imageHeight: 500,
+        background: "#18212f",
+        html: `
+          <img id="left-arrow" class="custom-arrow" src="../static/images/chevron-left.svg" alt="Left">
+          <img id="right-arrow" class="custom-arrow" src="../static/images/chevron-right.svg" alt="Right">
+        `,
+        didOpen: function () {
+          const popup = Swal.getPopup();
+          if (popup) {
+            $(popup).on("keydown", handleKeyDown);
+          }
+        },
+        willClose: function () {
+          const popup = Swal.getPopup();
+          if (popup) {
+            $(popup).off("keydown", handleKeyDown);
+          }
+        },
       })
       .then((result) => {
         if (result.isConfirmed) {
-          downloadImage(imageUrl.split("?")[0]);
+          downloadImage();
         }
       });
+
+    $("#left-arrow").on("click", function () {
+      previousImage();
+    });
+
+    $("#right-arrow").on("click", function () {
+      nextImage();
+    });
+  };
+
+  const nextImage = function () {
+    if (currentImageIndex === imagesCreateMap.size - 1) return;
+    currentImageIndex += 1;
+    const imageUrl = imagesCreateMap.get(currentImageIndex);
+    $(".swal2-image").attr("src", imageUrl);
+  };
+
+  const previousImage = function () {
+    if (currentImageIndex === 0) return;
+    currentImageIndex -= 1;
+    const imageUrl = imagesCreateMap.get(currentImageIndex);
+    $(".swal2-image").attr("src", imageUrl);
+  };
+
+  const handleKeyDown = function (event) {
+    if ($(".swal2-container").length === 0) return;
+    const LEFT_ARROW = 37;
+    const RIGHT_ARROW = 39;
+    if (event.keyCode === LEFT_ARROW) previousImage();
+    if (event.keyCode === RIGHT_ARROW) nextImage();
   };
 
   const showImageDialog = function (
@@ -485,7 +532,9 @@ const FunctionModule = (function () {
     });
   };
 
-  const downloadImage = function (imageUrl) {
+  const downloadImage = function () {
+    const imageUrl = imagesCreateMap.get(currentImageIndex);
+    debugger;
     fetchImageURL(imageUrl).then((url) => {
       const fileName = imageUrl.split("/").pop();
       fetch(url).then((response) => {
@@ -679,7 +728,9 @@ const FunctionModule = (function () {
               <div
                 class="normal-mode-overlay visible group-hover:visible delay-150 md:invisible"
               >
-                <div
+                ${
+                  prompt !== undefined
+                    ? `<div
                   class="flex flex-row place-content-between w-full absolute px-1 md:px-2 bottom-1 md:bottom-2 gap-1 md:justify-between justify-end"
                 >
                   <div
@@ -689,7 +740,9 @@ const FunctionModule = (function () {
                       class="whitespace-nowrap text-ellipsis overflow-hidden text-xs sm:text-sm 2xl:text-base text-white"
                     >${prompt}</div>
                   </div>
-                </div>
+                </div>`
+                    : ""
+                }
               </div>
             </div>`);
           $(`#images-column-${currentColumn}`).append(newDiv);
@@ -709,31 +762,47 @@ const FunctionModule = (function () {
         showWarning("No more images to show");
         return;
       }
-      console.table(images);
-      images.forEach((image) => {
-        getMetaImage(image.image_transferred_url, function (width, height) {
+      let tempDivArray = [];
+
+      const processImage = function (image, index) {
+        const imageUrl = image.image_transferred_url;
+        imagesCreateMap.set(index, imageUrl);
+
+        getMetaImage(imageUrl, function (width, height) {
           const newDiv = $("<div></div>");
           newDiv.addClass(
             "image-generated w-[136px] h-48 opacity-50 hover:opacity-100 image-placeholder-animation rounded-md overflow-hidden"
           );
+          newDiv.attr("data-index", index);
           newDiv.html(
             `<div class="h-full w-full flex justify-center items-center">
-              <div
-                class="flex w-full h-full relative rounded-[6px] shadow-md justify-center"
-              >
-                <img
-                  class="transition-all duration-500 object-fill cursor-pointer"
-                  src="${image.image_transferred_url}"
-                  style="aspect-ratio: ${height} / ${width};"
-                />
-              </div>
-            </div>`
+             <div class="flex w-full h-full relative rounded-[6px] shadow-md justify-center">
+                <img class="transition-all duration-500 object-fill cursor-pointer"
+                     src="${imageUrl}"
+                     decoding="async"
+                     style="aspect-ratio: ${height} / ${width};"/>
+             </div>
+           </div>`
           );
           newDiv.on("click", function () {
             showImage(this);
           });
-          $("#list-images").prepend(newDiv);
+
+          tempDivArray[index] = newDiv;
+
+          if (
+            images.length ===
+            tempDivArray.filter((div) => div !== undefined).length
+          ) {
+            tempDivArray.forEach((div) => {
+              $("#list-images").append(div);
+            });
+          }
         });
+      };
+
+      images.forEach((image, index) => {
+        processImage(image, index);
       });
     });
   };

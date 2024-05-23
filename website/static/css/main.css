@@ -1003,10 +1003,6 @@ video {
   width: 148px;
 }
 
-.w-\[1px\] {
-  width: 1px;
-}
-
 .w-\[38px\] {
   width: 38px;
 }
@@ -1042,10 +1038,6 @@ video {
 
 .w-full {
   width: 100%;
-}
-
-.w-\[156px\] {
-  width: 156px;
 }
 
 .min-w-60 {
@@ -2107,14 +2099,6 @@ video {
 
   .max-sm\:w-\[330px\] {
     width: 330px;
-  }
-
-  .max-sm\:w-40 {
-    width: 10rem;
-  }
-
-  .max-sm\:w-\[130px\] {
-    width: 130px;
   }
 
   .max-sm\:gap-1 {
