@@ -532,9 +532,8 @@ const FunctionModule = (function () {
     });
   };
 
-  const downloadImage = function () {
-    const imageUrl = imagesCreateMap.get(currentImageIndex);
-    debugger;
+  const downloadImage = function (imageURL = null) {
+    const imageUrl = imageURL ?? imagesCreateMap.get(currentImageIndex);
     fetchImageURL(imageUrl).then((url) => {
       const fileName = imageUrl.split("/").pop();
       fetch(url).then((response) => {
